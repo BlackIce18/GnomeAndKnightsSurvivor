@@ -11,7 +11,7 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
     private ObjectPool<EnemyComponent> _meleeAttackersPool;
 
     private int _spawnTime = 10;
-    private float _elapsedTime = 0;
+    private float _elapsedTime = 10;
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
     public void Init()
     {
@@ -22,12 +22,12 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
     {
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
-            Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn;
-            if (distanceEnemiesToSpawn.Count > 0)
+            Queue<EnemyWithPosition> meleeEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn;
+            if (meleeEnemiesToSpawn.Count > 0)
             {
-                while(distanceEnemiesToSpawn.Count != 0)
+                while(meleeEnemiesToSpawn.Count != 0)
                 {
-                    EnemyWithPosition enemyWithPosition = distanceEnemiesToSpawn.Dequeue();
+                    EnemyWithPosition enemyWithPosition = meleeEnemiesToSpawn.Dequeue();
                     Spawn(enemyWithPosition.Position, enemyWithPosition.enemyData);
                 }
             }
@@ -39,16 +39,20 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
     {
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
-        _followComponent.target = _sceneData.player;
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
-        _movableComponent.speed = enemyData.speed;
-        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
-        enemy.GetComponent<EnemyCollider>().world = _world;
-        _movableComponent.transform = enemy.transform;
         ref OnTriggerEnterComponent _hitEnemyComponent = ref enemyEnitity.Get<OnTriggerEnterComponent>();
         ref DefenceComponent _defenceComponent = ref enemyEnitity.Get<DefenceComponent>();
         ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
+
+        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
+        _movableComponent.transform = enemy.transform;
+        EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
+        enemyCollider.entity = enemyEnitity;
+        _followComponent.target = _sceneData.player;
+        _movableComponent.speed = enemyData.speed;
+        _defenceComponent.hp = enemyData.defenceComponent.hp;
+
         _enemyComponent.parentPool = _meleeAttackersPool;
         _meleeAttackersPool.AddToPool(_enemyComponent);
     }

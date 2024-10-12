@@ -1,7 +1,7 @@
 using UnityEngine;
 public struct BulletComponent
 {
-    public float damage;
+    public int damage;
     public float maxLifeTime;
     public float speed;
     public float size;

@@ -14,7 +14,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
     private int _spawnTime = 10;
     private float _elapsedTime = 0;
-
+    
     public void Init()
     {
         _distanceAttackersPool = _filter.Get1(0).meleeAttackersPool;
@@ -42,16 +42,20 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
     {
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
-        _followComponent.target = _sceneData.player;
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
-        _movableComponent.speed = enemyData.speed;
-        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
-        enemy.GetComponent<EnemyCollider>().world = _world;
-        _movableComponent.transform = enemy.transform;
         ref OnTriggerEnterComponent _hitEnemyComponent = ref enemyEnitity.Get<OnTriggerEnterComponent>();
         ref DefenceComponent _defenceComponent = ref enemyEnitity.Get<DefenceComponent>();
         ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
+
+        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
+        _movableComponent.transform = enemy.transform;
+        EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
+        enemyCollider.entity = enemyEnitity;
+        _followComponent.target = _sceneData.player;
+        _movableComponent.speed = enemyData.speed;
+        _defenceComponent.hp = enemyData.defenceComponent.hp;
+
         _enemyComponent.parentPool = _distanceAttackersPool;
         _distanceAttackersPool.AddToPool(_enemyComponent);
     }

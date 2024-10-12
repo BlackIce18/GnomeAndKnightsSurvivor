@@ -30,6 +30,7 @@ public class GunsInitSystem : IEcsInitSystem
             bullet.belongsToPool = activeGunComponent.pool;
             bullet.instance = GameObject.Instantiate(gun.gunData.prefab, _guns.parentForBullets);
             bullet.instance.SetActive(false);
+            bullet.instance.GetComponent<Bullet>().entity = entity;
             bullet.damage = gun.bulletData.damage;
             bullet.maxLifeTime = gun.bulletData.lifeTime;
             bullet.speed = gun.bulletData.speed;
