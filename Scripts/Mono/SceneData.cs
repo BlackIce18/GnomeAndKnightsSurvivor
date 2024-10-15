@@ -12,5 +12,8 @@ public class SceneData : MonoBehaviour
     public TextMeshProUGUI timerText;
     public Camera mainCamera;
     public EnemySpawnPatterns enemySpawnPatterns;
+    public Transform parentForBullets;
 
+    public AttackTypeData normalTypeAttackData;
+    public AttackTypeData piercingTypeAttackData;
 }

@@ -24,7 +24,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
     {
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
-            Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn;
+            Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn;
             if (distanceEnemiesToSpawn.Count > 0)
             {
                 while (distanceEnemiesToSpawn.Count != 0)
@@ -48,7 +48,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
         ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
 
-        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
+        GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
         _movableComponent.transform = enemy.transform;
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
         enemyCollider.entity = enemyEnitity;

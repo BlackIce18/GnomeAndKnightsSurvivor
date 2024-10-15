@@ -1,13 +1,6 @@
 using System;
+using System.Collections.Generic;
 
-public enum AttackType
-{
-    Normal,
-    Piercing,
-    Magic,
-    Siege,
-    Heroic
-}
 public enum AttackRange
 {
     Melee,

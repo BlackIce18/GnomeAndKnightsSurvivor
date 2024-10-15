@@ -4,7 +4,7 @@ using UnityEngine;
 public class GunsInitSystem : IEcsInitSystem
 {
     private EcsWorld _world;
-    private Guns _guns;
+    private SceneData _sceneData;
     private ActiveGuns _activeGuns;
 
 
@@ -28,13 +28,16 @@ public class GunsInitSystem : IEcsInitSystem
             EcsEntity entity = _world.NewEntity();
             ref BulletComponent bullet = ref entity.Get<BulletComponent>();
             bullet.belongsToPool = activeGunComponent.pool;
-            bullet.instance = GameObject.Instantiate(gun.gunData.prefab, _guns.parentForBullets);
+            bullet.instance = GameObject.Instantiate(gun.gunData.prefab, _sceneData.parentForBullets);
             bullet.instance.SetActive(false);
             bullet.instance.GetComponent<Bullet>().entity = entity;
             bullet.damage = gun.bulletData.damage;
             bullet.maxLifeTime = gun.bulletData.lifeTime;
             bullet.speed = gun.bulletData.speed;
             bullet.size = gun.bulletData.size;
+
+            bullet.attackType = new NormalAttack(_sceneData.normalTypeAttackData);
+
             activeGunComponent.pool.AddToPool(bullet);
         }
         return activeGunComponent;

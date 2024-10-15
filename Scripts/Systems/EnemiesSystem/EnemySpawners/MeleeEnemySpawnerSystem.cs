@@ -45,7 +45,7 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
         ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
 
-        GameObject enemy = GameObject.Instantiate(enemyData.prefab, Vector3.zero, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
+        GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
         _movableComponent.transform = enemy.transform;
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
         enemyCollider.entity = enemyEnitity;

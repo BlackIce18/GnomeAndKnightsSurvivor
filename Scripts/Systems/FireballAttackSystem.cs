@@ -4,10 +4,7 @@ using UnityEngine;
 public class FireballAttackSystem : IEcsRunSystem
 {
     private EcsFilter<MovableComponent, UserInputComponent> _filter;
-
-    private Guns _guns;
     private ActiveGuns _activeGuns;
-
     private EcsFilter<ActiveBulletsComponent> _activeBullets;
 
     public void Run()

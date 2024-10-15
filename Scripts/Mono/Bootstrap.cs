@@ -9,7 +9,6 @@ public class Bootstrap : MonoBehaviour
     private EcsSystems _systems;
     [SerializeField] private SceneData _sceneData;
     [SerializeField] private EnemiesData _enemyData;
-    [SerializeField] private Guns _guns;
     [SerializeField] private ActiveGuns _activeGuns;
     // Start is called before the first frame update
     void Start()
@@ -25,14 +24,13 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new FireballAttackSystem());
         _systems.Add(new BulletMoverSystem());
         _systems.Add(new FollowSystem());
-        _systems.Add(new DamagableSystem());
+        _systems.Add(new DamageableSystem());
         _systems.Add(new LifeTimeBulletsSystem());
         _systems.Add(new EnemySpawnerSystem());
         _systems.Add(new MeleeEnemySpawnerSystem());
         _systems.Add(new DistanceEnemySpawnerSystem());
         _systems.Inject(_sceneData);
         _systems.Inject(_enemyData);
-        _systems.Inject(_guns);
         _systems.Inject(_activeGuns);
         _systems.Init();
     }

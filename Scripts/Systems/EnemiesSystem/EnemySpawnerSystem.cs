@@ -30,7 +30,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
             var availableEnemies = _sceneData.spawnTimings.enemies[_spawnTimingIndex].availableEnemies;
             int randomNumber = UnityEngine.Random.Range(0, availableEnemies.Count);
 
-            Vector3 spawnPosition = enemySpawnPattern.SpawnPoints[i].transform.localPosition;
+            Vector3 spawnPosition = enemySpawnPattern.SpawnPoints[i].transform.position;
             EnemyData enemyData = availableEnemies[randomNumber];
 
             var enemyToSpawn = new EnemyWithPosition();
