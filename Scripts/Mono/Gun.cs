@@ -6,7 +6,8 @@ public class Gun : MonoBehaviour
 {
     [SerializeField] private GunAndBulletDatas data;
     [HideInInspector] public float attackInterval;
-    public GunAndBulletDatas Data { get { return data; } }
+
+    public GunAndBulletDatas GunAndBulletData { get { return data; } }
 
     /*
     readonly ObjectPool<BulletComponent> _pool;

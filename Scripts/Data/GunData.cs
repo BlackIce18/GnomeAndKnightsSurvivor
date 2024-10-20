@@ -10,4 +10,5 @@ public class GunData : ScriptableObject
     public float attackRate;
     public int minAttackRange;
     public int maxAttackRange;
+    public AttackTypeData attackType;
 }

@@ -3,6 +3,13 @@ using System;
 using UnityEngine;
 using System.Linq;
 
+[Serializable]
+public enum AttackTypeEnum 
+{
+    Normal,
+    Piercing
+}
+
 public abstract class AttackType : IAttackType
 {
     protected abstract AttackTypeData AttackTypeData { get; set; }
@@ -32,7 +39,7 @@ public abstract class AttackType : IAttackType
         return Convert.ToInt32(damage * defencePercent / 100);
     }*/
 }
-public class NormalAttack : AttackType
+public class NormalAttack : AttackType, IAttackType
 {
     private Dictionary<ArmorType, int> _damageTable = new Dictionary<ArmorType, int>();
     private AttackTypeData _attackTypeData;
@@ -52,7 +59,7 @@ public class NormalAttack : AttackType
         return Convert.ToInt32(damage * _damageTable[defenceComponent.armorType] / 100);
     }
 }
-public class PiercingAttack : AttackType
+public class PiercingAttack : AttackType, IAttackType
 {
     /*
     private readonly Dictionary<ArmorType, int> damageTable = new Dictionary<ArmorType, int>()

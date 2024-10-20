@@ -18,7 +18,7 @@ public struct BulletComponent
     //ѕосле спавна увеличиваетс€ значение (пока != maxLifeTime)
     public float currentLifeTime;
     public ObjectPool<BulletComponent> belongsToPool;
-    public AttackType attackType;
+    public IAttackType attackType;
     public void Default()
     {
         this.startPosition = Vector3.zero;
