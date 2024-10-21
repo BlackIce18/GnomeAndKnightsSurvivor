@@ -5,23 +5,27 @@ using UnityEngine;
 public class AttackTypeInjector
 {
     public GunsInitSystem GunsInitSystem;
-    public void Inject(IAttackType attackType, AttackTypeData attackTypeData)
+    public AttackTypeInjector(GunsInitSystem gunsInitSystem) 
     {
-        /*IAttackType attack;
+        GunsInitSystem = gunsInitSystem;
+    }
+    public IAttackType Inject(AttackTypeData attackTypeData)
+    {
+        IAttackType attackType;
 
-        switch (attackType)
+        switch (attackTypeData.attackType)
         {
-            case NormalAttack:
-                attack = new NormalAttack(attackTypeData);
+            case AttackTypeEnum.Normal:
+                attackType = new NormalAttack(attackTypeData);
                 break;
-            case PiercingAttack: 
-                attack = new PiercingAttack(attackTypeData);
+            case AttackTypeEnum.Piercing:
+                attackType = new PiercingAttack(attackTypeData);
                 break;
             default:
-                attack = new NormalAttack(attackTypeData);
+                attackType = new NormalAttack(attackTypeData);
                 break;
         }
 
-        GunsInitSystem.Inject(attack);*/
+        return attackType;
     }
 }

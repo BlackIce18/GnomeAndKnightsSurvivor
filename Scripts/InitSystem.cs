@@ -30,20 +30,6 @@ public class InitSystem : IEcsInitSystem
         ref EnemyQueueToSpawnComponent _enemyQueueToSpawn = ref enemyEntity.Get<EnemyQueueToSpawnComponent>();
         _enemyQueueToSpawn.meleeEnemiesToSpawn = new Queue<EnemyWithPosition>();
         _enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
-        /*
-        for(int i = 0; i < 2; i++)
-        {
-            EcsEntity enemyEnitity = _world.NewEntity();
-            ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
-            _followComponent.target = _sceneData.player;
-            ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
-            _movableComponent.speed = _enemiesData.knight.speed;
-            GameObject enemy = GameObject.Instantiate(_enemiesData.knight.prefab, new Vector3(Random.Range(0, 20), 0, -10), _enemiesData.knight.prefab.transform.rotation, _enemiesData.parentForEnemies);
-            enemy.GetComponent<EnemyCollider>().world = _world;
-            _movableComponent.transform = enemy.transform;
-            ref OnTriggerEnterComponent _hitEnemyComponent = ref enemyEnitity.Get<OnTriggerEnterComponent>();
-            ref DefenceComponent _defenceComponent = ref enemyEnitity.Get<DefenceComponent>();
-        }*/
 
     }
 }

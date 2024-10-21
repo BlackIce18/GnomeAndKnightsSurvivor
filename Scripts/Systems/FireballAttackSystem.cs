@@ -29,7 +29,7 @@ public class FireballAttackSystem : IEcsRunSystem
                 }
 
                 activeGun.gun.attackInterval = activeGun.gun.GunAndBulletData.gunData.attackRate;
-                activeBullets.list.Add(Spawn(bulletStartPosition, bulletEndPosition, _activeGuns.GunList[i].pool));
+                activeBullets.list.Add(Spawn(bulletStartPosition, bulletEndPosition, _activeGuns.GunList[i].bulletPool));
             }
         }
     }

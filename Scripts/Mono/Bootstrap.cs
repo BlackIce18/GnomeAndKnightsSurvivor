@@ -29,6 +29,7 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new EnemySpawnerSystem());
         _systems.Add(new MeleeEnemySpawnerSystem());
         _systems.Add(new DistanceEnemySpawnerSystem());
+        _systems.Add(new RemoveEnemySystem());
         _systems.Inject(_sceneData);
         _systems.Inject(_enemyData);
         _systems.Inject(_activeGuns);

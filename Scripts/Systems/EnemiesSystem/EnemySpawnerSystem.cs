@@ -58,6 +58,9 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
         }
     }
 
+    // Изменяется доступный пул мобов для спавна
+    // К примеру, на 1-ой минуте только мили мобы
+    // на 2-ой добавляются мобы с дистанционнной атакой
     public void UpdateSpawnIndexByTimer()
     {
         ref TimerComponent _currentTime = ref _timer.Get1(0);

@@ -28,14 +28,14 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
                 while(meleeEnemiesToSpawn.Count != 0)
                 {
                     EnemyWithPosition enemyWithPosition = meleeEnemiesToSpawn.Dequeue();
-                    Spawn(enemyWithPosition.Position, enemyWithPosition.enemyData);
+                    CreateNewEnemy(enemyWithPosition.Position, enemyWithPosition.enemyData);
                 }
             }
 
             _elapsedTime = 0;
         }
     }
-    public void Spawn(Vector3 position, EnemyData enemyData)
+    public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
     {
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
@@ -54,6 +54,18 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
         _defenceComponent.hp = enemyData.defenceComponent.hp;
 
         _enemyComponent.parentPool = _meleeAttackersPool;
+        _enemyComponent.ecsEntity = enemyEnitity;
+        _enemyComponent.instance = enemy;
+
         _meleeAttackersPool.AddToPool(_enemyComponent);
+    }
+
+    public EnemyComponent GetFromPool(UnityEngine.Vector3 position)
+    {
+        EnemyComponent _enemyComponent = _meleeAttackersPool.GetFromPool();
+        _enemyComponent.instance.transform.position = position;
+        _enemyComponent.instance.SetActive(true);
+
+        return _enemyComponent;
     }
 }

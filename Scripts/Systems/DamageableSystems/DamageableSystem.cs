@@ -22,6 +22,8 @@ public class DamageableSystem : IEcsRunSystem
                     Bullet bullet = OnTriggerEnterComponent.other.GetComponent<Bullet>();
                     BulletComponent bulletComponent = bullet.entity.Get<BulletComponent>();
                     defenceComponent.hp -= bulletComponent.attackType.CalculateDamage(defenceComponent, bulletComponent.damage);
+
+                    bullet.AfterCollide();
                     Debug.Log(defenceComponent.hp);
                 }
                 _filter.GetEntity(i).Get<OnTriggerEnterComponent>().first = null;

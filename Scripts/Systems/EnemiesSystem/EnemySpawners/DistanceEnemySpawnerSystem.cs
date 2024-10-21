@@ -17,7 +17,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
     
     public void Init()
     {
-        _distanceAttackersPool = _filter.Get1(0).meleeAttackersPool;
+        _distanceAttackersPool = _filter.Get1(0).distanceAttackersPool;
     }
 
     public void Run()
@@ -30,7 +30,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
                 while (distanceEnemiesToSpawn.Count != 0)
                 {
                     EnemyWithPosition enemyWithPosition = distanceEnemiesToSpawn.Dequeue();
-                    Spawn(enemyWithPosition.Position, enemyWithPosition.enemyData);
+                    CreateNewEnemy(enemyWithPosition.Position, enemyWithPosition.enemyData);
                 }
             }
 
@@ -38,7 +38,7 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
         }
     }
 
-    public void Spawn(Vector3 position, EnemyData enemyData)
+    public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
     {
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
@@ -57,6 +57,18 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
         _defenceComponent.hp = enemyData.defenceComponent.hp;
 
         _enemyComponent.parentPool = _distanceAttackersPool;
+        _enemyComponent.ecsEntity = enemyEnitity;
+        _enemyComponent.instance = enemy;
+
         _distanceAttackersPool.AddToPool(_enemyComponent);
+    }
+
+    public EnemyComponent GetFromPool(UnityEngine.Vector3 position)
+    {
+        EnemyComponent _enemyComponent = _distanceAttackersPool.GetFromPool();
+        _enemyComponent.instance.transform.position = position;
+        _enemyComponent.instance.SetActive(true);
+
+        return _enemyComponent;
     }
 }

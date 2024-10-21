@@ -2,5 +2,6 @@ using System.Numerics;
 
 public interface IEnemySpawner
 {
-    public void Spawn(UnityEngine.Vector3 position, EnemyData enemyData);
+    public void CreateNewEnemy(UnityEngine.Vector3 position, EnemyData enemyData);
+    public EnemyComponent GetFromPool(UnityEngine.Vector3 position);
 }

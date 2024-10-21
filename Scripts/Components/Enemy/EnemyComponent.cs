@@ -1,8 +1,11 @@
 using Leopotam.Ecs;
+using UnityEngine;
 
 public struct EnemyComponent
 {
     public ObjectPool<EnemyComponent> parentPool;
+    public EcsEntity ecsEntity;
+    public GameObject instance;
 }
 // Компонент для воина
 public struct WarriorComponent : IEcsIgnoreInFilter { }
