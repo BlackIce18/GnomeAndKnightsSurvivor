@@ -2,41 +2,55 @@ using Leopotam.Ecs;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpawner
+public class MeleeEnemySpawnerSystem : IEnemySpawner
 {
     private EcsWorld _world;
     private SceneData _sceneData;
     private EnemiesData _enemiesData;
-    private EcsFilter<EnemiesPoolComponent> _filter;
     private ObjectPool<EnemyComponent> _meleeAttackersPool;
 
-    private int _spawnTime = 10;
-    private float _elapsedTime = 10;
-    private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
-    public void Init()
+    //private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
+
+    public MeleeEnemySpawnerSystem(EcsWorld world, SceneData sceneData, EnemiesData enemiesData, ObjectPool<EnemyComponent> pool)
     {
-        _meleeAttackersPool = _filter.Get1(0).meleeAttackersPool;
+        _world = world;
+        _sceneData = sceneData;
+        _enemiesData = enemiesData;
+        _meleeAttackersPool = pool;
     }
 
-    public void Run()
+    /*public void Spawn()
     {
-        if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
+        Queue<EnemyWithPosition> meleeEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn;
+        if (meleeEnemiesToSpawn.Count > 0)
         {
-            Queue<EnemyWithPosition> meleeEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn;
-            if (meleeEnemiesToSpawn.Count > 0)
+            while (meleeEnemiesToSpawn.Count != 0)
             {
-                while(meleeEnemiesToSpawn.Count != 0)
+                EnemyWithPosition enemyWithPosition = meleeEnemiesToSpawn.Dequeue();
+                Debug.Log(_meleeAttackersPool.PoolSize);
+                if (_meleeAttackersPool.PoolSize == 0)
                 {
-                    EnemyWithPosition enemyWithPosition = meleeEnemiesToSpawn.Dequeue();
                     CreateNewEnemy(enemyWithPosition.Position, enemyWithPosition.enemyData);
                 }
+                else
+                {
+                    GetFromPool(enemyWithPosition.Position);
+                }
             }
-
-            _elapsedTime = 0;
         }
-    }
+    }*/
+
     public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
     {
+        EnemyComponent _enemyComponentFromPool = _meleeAttackersPool.GetFromPool();
+        if(_enemyComponentFromPool.instance != null)
+        {
+            _enemyComponentFromPool.instance.transform.position = position;
+            _enemyComponentFromPool.instance.SetActive(true);
+            _enemyComponentFromPool.ecsEntity.Get<DefenceComponent>().hp = enemyData.defenceComponent.hp;
+            return;
+        }
+
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
@@ -50,7 +64,7 @@ public class MeleeEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpaw
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
         enemyCollider.entity = enemyEnitity;
         _followComponent.target = _sceneData.player;
-        _movableComponent.speed = enemyData.speed;
+        _movableComponent.speed = enemyData.speed + Random.Range(-0.25f, 0.25f);
         _defenceComponent.hp = enemyData.defenceComponent.hp;
 
         _enemyComponent.parentPool = _meleeAttackersPool;

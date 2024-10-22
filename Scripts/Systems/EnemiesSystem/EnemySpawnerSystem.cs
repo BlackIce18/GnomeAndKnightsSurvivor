@@ -16,45 +16,58 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     private float _elapsedTime = 0;
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
 
+    private EcsFilter<EnemiesPoolComponent> _poolsFilter;
+    private IEnemySpawner _distanceEnemySpawner;
+    private IEnemySpawner _meleeEnemySpawner;
+
     public void Init()
     {
-    }
-
-    public void Spawn()
-    {
-        UpdateSpawnIndexByTimer();
-        EnemySpawnPoints enemySpawnPattern = GetRandomSpawnPattern();
-
-        for(int i = 0; i < enemySpawnPattern.SpawnPoints.Count; i++)
-        {
-            var availableEnemies = _sceneData.spawnTimings.enemies[_spawnTimingIndex].availableEnemies;
-            int randomNumber = UnityEngine.Random.Range(0, availableEnemies.Count);
-
-            Vector3 spawnPosition = enemySpawnPattern.SpawnPoints[i].transform.position;
-            EnemyData enemyData = availableEnemies[randomNumber];
-
-            var enemyToSpawn = new EnemyWithPosition();
-            enemyToSpawn.enemyData = enemyData;
-            enemyToSpawn.Position = spawnPosition;
-
-            switch (enemyData.attackComponent.AttackRange)
-            {
-                case AttackRange.Melee:
-                _enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn.Enqueue(enemyToSpawn);
-                break;
-                case AttackRange.Distance:
-                _enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn.Enqueue(enemyToSpawn);
-                break;
-            }
-        }
+        _meleeEnemySpawner = new MeleeEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).meleeAttackersPool);
+        _distanceEnemySpawner = new DistanceEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).distanceAttackersPool);
     }
 
     public void Run()
     {
         if((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
+            UpdateSpawnIndexByTimer();
             Spawn();
             _elapsedTime = 0;
+        }
+    }
+
+    public void Spawn()
+    {
+        EnemySpawnPoints enemySpawnPattern = GetRandomSpawnPattern();
+
+        for (int i = 0; i < enemySpawnPattern.SpawnPoints.Count; i++)
+        {
+            var availableEnemies = _sceneData.spawnTimings.enemies[_spawnTimingIndex].availableEnemies;
+            int randomNumber = UnityEngine.Random.Range(0, availableEnemies.Count);
+
+            EnemyData enemyData = availableEnemies[randomNumber];
+
+            var enemyToSpawn = new EnemyWithPosition();
+            enemyToSpawn.enemyData = enemyData;
+            enemyToSpawn.Position = enemySpawnPattern.SpawnPoints[i].transform.position;
+
+
+            IEnemySpawner enemySpawner;
+            switch (enemyData.attackComponent.AttackRange)
+            {
+                case AttackRange.Melee:
+                    enemySpawner = _meleeEnemySpawner;
+                    //_enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn.Enqueue(enemyToSpawn);
+                    break;
+                case AttackRange.Distance:
+                    enemySpawner = _distanceEnemySpawner;
+                    //_enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn.Enqueue(enemyToSpawn);
+                    break;
+                default:
+                    enemySpawner = _meleeEnemySpawner;
+                    break;
+            }
+            enemySpawner.CreateNewEnemy(enemyToSpawn.Position, enemyData);
         }
     }
 

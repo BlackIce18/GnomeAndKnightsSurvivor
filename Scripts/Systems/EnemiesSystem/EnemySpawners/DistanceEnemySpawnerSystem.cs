@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemySpawner
+public class DistanceEnemySpawnerSystem : IEnemySpawner
 {
     private EcsWorld _world;
     private SceneData _sceneData;
@@ -12,34 +12,47 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
     private ObjectPool<EnemyComponent> _distanceAttackersPool;
 
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
-    private int _spawnTime = 10;
-    private float _elapsedTime = 0;
-    
-    public void Init()
+
+    public DistanceEnemySpawnerSystem(EcsWorld world, SceneData sceneData, EnemiesData enemiesData, ObjectPool<EnemyComponent> pool)
     {
-        _distanceAttackersPool = _filter.Get1(0).distanceAttackersPool;
+        _world = world;
+        _sceneData = sceneData;
+        _enemiesData = enemiesData;
+        _distanceAttackersPool = pool;
     }
 
-    public void Run()
+    public void Spawn()
     {
-        if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
+        Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn;
+        if (distanceEnemiesToSpawn.Count > 0)
         {
-            Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn;
-            if (distanceEnemiesToSpawn.Count > 0)
+            while (distanceEnemiesToSpawn.Count != 0)
             {
-                while (distanceEnemiesToSpawn.Count != 0)
+                EnemyWithPosition enemyWithPosition = distanceEnemiesToSpawn.Dequeue();
+
+                Debug.Log(_distanceAttackersPool.PoolSize);
+                if (_distanceAttackersPool.AvailableObjectsCount == 0)
                 {
-                    EnemyWithPosition enemyWithPosition = distanceEnemiesToSpawn.Dequeue();
                     CreateNewEnemy(enemyWithPosition.Position, enemyWithPosition.enemyData);
                 }
+                else
+                {
+                    GetFromPool(enemyWithPosition.Position);
+                }
             }
-
-            _elapsedTime = 0;
         }
     }
 
     public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
     {
+        EnemyComponent _enemyComponentFromPool = _distanceAttackersPool.GetFromPool();
+        if(_enemyComponentFromPool.instance != null)
+        {
+            _enemyComponentFromPool.instance.transform.position = position;
+            _enemyComponentFromPool.instance.SetActive(true);
+            return;
+        }
+
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
@@ -49,11 +62,12 @@ public class DistanceEnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem, IEnemyS
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
 
         GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);
+        enemy.SetActive(false);
         _movableComponent.transform = enemy.transform;
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
         enemyCollider.entity = enemyEnitity;
         _followComponent.target = _sceneData.player;
-        _movableComponent.speed = enemyData.speed;
+        _movableComponent.speed = enemyData.speed + Random.Range(-0.25f, 0.25f);
         _defenceComponent.hp = enemyData.defenceComponent.hp;
 
         _enemyComponent.parentPool = _distanceAttackersPool;
