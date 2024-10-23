@@ -18,8 +18,6 @@ public class RemoveEnemySystem : IEcsRunSystem
 
             if(defenceComponent.hp <= 0)
             {
-                // Выполнять сброс defenceComponent
-                defenceComponent.hp = 10;
                 enemyComponent.instance.SetActive(false);
                 enemyComponent.parentPool.AddToPool(enemyComponent); 
             }

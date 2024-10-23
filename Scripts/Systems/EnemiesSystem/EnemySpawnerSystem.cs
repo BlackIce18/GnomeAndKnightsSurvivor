@@ -12,7 +12,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     private EcsFilter<TimerComponent> _timer;
     private int _spawnTimingIndex = 0;
 
-    private int _spawnTime = 10;
+    private float _spawnTime;
     private float _elapsedTime = 0;
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
 
@@ -20,15 +20,17 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     private IEnemySpawner _distanceEnemySpawner;
     private IEnemySpawner _meleeEnemySpawner;
 
+    private readonly Vector2[] screenDirections = new Vector2[] { Vector2.down * 25, Vector2.up * 10, Vector2.left * 15, Vector2.right * 15 };
     public void Init()
     {
+        _spawnTime = _sceneData.spawnTimings.spawnTimeInterval;
         _meleeEnemySpawner = new MeleeEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).meleeAttackersPool);
         _distanceEnemySpawner = new DistanceEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).distanceAttackersPool);
     }
 
     public void Run()
     {
-        if((_elapsedTime += Time.deltaTime) >= _spawnTime)
+        if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
             UpdateSpawnIndexByTimer();
             Spawn();
@@ -50,7 +52,6 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
             var enemyToSpawn = new EnemyWithPosition();
             enemyToSpawn.enemyData = enemyData;
             enemyToSpawn.Position = enemySpawnPattern.SpawnPoints[i].transform.position;
-
 
             IEnemySpawner enemySpawner;
             switch (enemyData.attackComponent.AttackRange)
@@ -93,6 +94,16 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     public EnemySpawnPoints GetRandomSpawnPattern()
     {
         int randomPatternNumber = UnityEngine.Random.Range(0, _sceneData.enemySpawnPatterns.patterns.Count);
-        return _sceneData.enemySpawnPatterns.patterns[randomPatternNumber];
+        EnemySpawnPoints enemySpawnPoints = _sceneData.enemySpawnPatterns.patterns[randomPatternNumber];
+
+        var randomDirection = Random.Range(0, screenDirections.Length-1);
+        string str = "";
+        for(int i = 0; i < enemySpawnPoints.SpawnPoints.Count; i++)
+        {
+            enemySpawnPoints.SpawnPoints[i].transform.position = new Vector3(enemySpawnPoints.SpawnPoints[i].transform.position.x + _sceneData.player.position.x + screenDirections[randomDirection].x, enemySpawnPoints.SpawnPoints[i].transform.position.y, enemySpawnPoints.SpawnPoints[i].transform.position.z + _sceneData.player.position.z + screenDirections[randomDirection].y);
+            str += (enemySpawnPoints.SpawnPoints[i].transform.position.x + "," + enemySpawnPoints.SpawnPoints[i].transform.position.z)+ " ";
+        }
+        Debug.Log(str);
+        return enemySpawnPoints;
     }
 }

@@ -6,6 +6,7 @@ public struct EnemyComponent
     public ObjectPool<EnemyComponent> parentPool;
     public EcsEntity ecsEntity;
     public GameObject instance;
+    public EnemyData enemyData;
 }
 // Компонент для воина
 public struct WarriorComponent : IEcsIgnoreInFilter { }

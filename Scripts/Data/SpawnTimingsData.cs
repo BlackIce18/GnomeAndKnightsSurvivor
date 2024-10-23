@@ -12,4 +12,5 @@ public struct PossibilityToSpawnEnemy
 public class SpawnTimingsData : ScriptableObject
 {
     public List<PossibilityToSpawnEnemy> enemies;
+    public float spawnTimeInterval;
 }

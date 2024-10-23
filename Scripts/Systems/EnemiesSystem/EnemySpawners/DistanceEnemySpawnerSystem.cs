@@ -21,28 +21,6 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
         _distanceAttackersPool = pool;
     }
 
-    public void Spawn()
-    {
-        Queue<EnemyWithPosition> distanceEnemiesToSpawn = _enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn;
-        if (distanceEnemiesToSpawn.Count > 0)
-        {
-            while (distanceEnemiesToSpawn.Count != 0)
-            {
-                EnemyWithPosition enemyWithPosition = distanceEnemiesToSpawn.Dequeue();
-
-                Debug.Log(_distanceAttackersPool.PoolSize);
-                if (_distanceAttackersPool.AvailableObjectsCount == 0)
-                {
-                    CreateNewEnemy(enemyWithPosition.Position, enemyWithPosition.enemyData);
-                }
-                else
-                {
-                    GetFromPool(enemyWithPosition.Position);
-                }
-            }
-        }
-    }
-
     public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
     {
         EnemyComponent _enemyComponentFromPool = _distanceAttackersPool.GetFromPool();
@@ -50,6 +28,7 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
         {
             _enemyComponentFromPool.instance.transform.position = position;
             _enemyComponentFromPool.instance.SetActive(true);
+            _enemyComponentFromPool.ecsEntity.Get<DefenceComponent>().hp = enemyData.defenceComponent.hp;
             return;
         }
 
@@ -73,16 +52,8 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
         _enemyComponent.parentPool = _distanceAttackersPool;
         _enemyComponent.ecsEntity = enemyEnitity;
         _enemyComponent.instance = enemy;
+        _enemyComponent.enemyData = enemyData;
 
         _distanceAttackersPool.AddToPool(_enemyComponent);
-    }
-
-    public EnemyComponent GetFromPool(UnityEngine.Vector3 position)
-    {
-        EnemyComponent _enemyComponent = _distanceAttackersPool.GetFromPool();
-        _enemyComponent.instance.transform.position = position;
-        _enemyComponent.instance.SetActive(true);
-
-        return _enemyComponent;
     }
 }

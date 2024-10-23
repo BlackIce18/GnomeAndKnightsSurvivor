@@ -70,16 +70,8 @@ public class MeleeEnemySpawnerSystem : IEnemySpawner
         _enemyComponent.parentPool = _meleeAttackersPool;
         _enemyComponent.ecsEntity = enemyEnitity;
         _enemyComponent.instance = enemy;
+        _enemyComponent.enemyData = enemyData;
 
         _meleeAttackersPool.AddToPool(_enemyComponent);
-    }
-
-    public EnemyComponent GetFromPool(UnityEngine.Vector3 position)
-    {
-        EnemyComponent _enemyComponent = _meleeAttackersPool.GetFromPool();
-        _enemyComponent.instance.transform.position = position;
-        _enemyComponent.instance.SetActive(true);
-
-        return _enemyComponent;
     }
 }
