@@ -16,4 +16,8 @@ public class SceneData : MonoBehaviour
 
     public AttackTypeData normalTypeAttackData;
     public AttackTypeData piercingTypeAttackData;
+
+    public TextMeshProUGUI moneyText;
+    public WalletData walletData;
+    public ShopItemDatas shopItemDatas;
 }

@@ -18,6 +18,11 @@ public class InitSystem : IEcsInitSystem
         _playerMoveComponent.transform = _sceneData.player;
         ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
         ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
+        ref WalletComponent _walletComponent = ref playerEntity.Get<WalletComponent>();
+        _walletComponent.Money = _sceneData.walletData.startMoney;
+        _walletComponent.MoneyIncome = _sceneData.walletData.startMoneyIncome;
+        _walletComponent.CashBountyPercent = _sceneData.walletData.startCashBountyPercent;
+        _sceneData.moneyText.text = _walletComponent.Money.ToString();
 
         EcsEntity attacksEntity = _world.NewEntity();
         ref ActiveBulletsComponent _activeBullets = ref attacksEntity.Get<ActiveBulletsComponent>();
