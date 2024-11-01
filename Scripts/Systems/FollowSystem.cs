@@ -15,7 +15,6 @@ public class FollowSystem : IEcsRunSystem
             Vector3 difference = movableComponent.transform.position - followComponent.target.position;
             difference.y = 0;
             //Vector3 position = new Vector3(followComponent.target.transform.position.x, movableComponent.transform.position.y, followComponent.target.transform.position.z);
-            
             movableComponent.transform.Translate(-difference * movableComponent.speed * Time.deltaTime);
         }
     }

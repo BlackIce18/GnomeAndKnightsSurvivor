@@ -18,6 +18,10 @@ public class SceneData : MonoBehaviour
     public AttackTypeData piercingTypeAttackData;
 
     public TextMeshProUGUI moneyText;
+    public TextMeshProUGUI moneyIncomeText;
+    public TextMeshProUGUI killBountyText;
     public WalletData walletData;
     public ShopItemDatas shopItemDatas;
+
+    public PlayerStats playerStats;
 }

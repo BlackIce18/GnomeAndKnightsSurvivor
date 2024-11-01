@@ -58,11 +58,9 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
             {
                 case AttackRange.Melee:
                     enemySpawner = _meleeEnemySpawner;
-                    //_enemyQueueToSpawn.Get1(0).meleeEnemiesToSpawn.Enqueue(enemyToSpawn);
                     break;
                 case AttackRange.Distance:
                     enemySpawner = _distanceEnemySpawner;
-                    //_enemyQueueToSpawn.Get1(0).distanceEnemiesToSpawn.Enqueue(enemyToSpawn);
                     break;
                 default:
                     enemySpawner = _meleeEnemySpawner;
@@ -97,13 +95,11 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
         EnemySpawnPoints enemySpawnPoints = _sceneData.enemySpawnPatterns.patterns[randomPatternNumber];
 
         var randomDirection = Random.Range(0, screenDirections.Length-1);
-        string str = "";
         for(int i = 0; i < enemySpawnPoints.SpawnPoints.Count; i++)
         {
             enemySpawnPoints.SpawnPoints[i].transform.position = new Vector3(enemySpawnPoints.SpawnPoints[i].transform.position.x + _sceneData.player.position.x + screenDirections[randomDirection].x, enemySpawnPoints.SpawnPoints[i].transform.position.y, enemySpawnPoints.SpawnPoints[i].transform.position.z + _sceneData.player.position.z + screenDirections[randomDirection].y);
-            str += (enemySpawnPoints.SpawnPoints[i].transform.position.x + "," + enemySpawnPoints.SpawnPoints[i].transform.position.z)+ " ";
         }
-        Debug.Log(str);
+
         return enemySpawnPoints;
     }
 }

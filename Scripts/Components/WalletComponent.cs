@@ -4,7 +4,7 @@ using UnityEngine;
 
 public struct WalletComponent
 {
-    public int Money;
-    public int MoneyIncome;
-    public int CashBountyPercent;
+    public int money;
+    public int moneyIncome;
+    public int killBounty;
 }

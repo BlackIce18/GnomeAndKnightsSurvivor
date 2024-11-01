@@ -19,8 +19,8 @@ public class PlayerMoneyIncomeSystem : IEcsInitSystem, IEcsRunSystem
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
             ref WalletComponent wallet = ref _filter.Get1(0);
-            wallet.Money += wallet.MoneyIncome;
-            _sceneData.moneyText.text = wallet.Money.ToString();
+            wallet.money += wallet.moneyIncome;
+            _sceneData.moneyText.text = wallet.money.ToString();
 
             _elapsedTime = 0;
         }
