@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SceneData : MonoBehaviour
 {
@@ -10,6 +9,7 @@ public class SceneData : MonoBehaviour
     public EnemyPoolData enemyPoolData;
     public SpawnTimingsData spawnTimings;
     public TextMeshProUGUI timerText;
+    public Slider timerSlider;
     public Camera mainCamera;
     public EnemySpawnPatterns enemySpawnPatterns;
     public Transform parentForBullets;
@@ -21,7 +21,7 @@ public class SceneData : MonoBehaviour
     public TextMeshProUGUI moneyIncomeText;
     public TextMeshProUGUI killBountyText;
     public WalletData walletData;
-    public ShopItemDatas shopItemDatas;
+    public Shop shop;
 
     public PlayerStats playerStats;
 }

@@ -2,10 +2,31 @@ using Leopotam.Ecs;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InitSystem : IEcsInitSystem
+public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
 {
     private EcsWorld _world;
     private SceneData _sceneData;
+    public void PreInit()
+    {
+        var shopEntity = _world.NewEntity();
+        ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
+        ref ShopBuyItemComponent shopBuy = ref shopEntity.Get<ShopBuyItemComponent>();
+        shop.shopItems = new List<ShopItemData>();
+        shopBuy.list = new List<ShopBuyItemCommand>();
+
+        var walletEntity = _world.NewEntity();
+        ref WalletComponent _walletComponent = ref walletEntity.Get<WalletComponent>();
+        ref WalletUpdateComponent _walletUpdate = ref walletEntity.Get<WalletUpdateComponent>();
+        _walletUpdate.money = _sceneData.walletData.startMoney;
+        _walletUpdate.moneyIncome = _sceneData.walletData.startMoneyIncome;
+        _walletUpdate.killBounty = _sceneData.walletData.startCashBountyPercent;
+        /*_walletComponent.money = _sceneData.walletData.startMoney;
+        _walletComponent.moneyIncome = _sceneData.walletData.startMoneyIncome;
+        _walletComponent.killBounty = _sceneData.walletData.startCashBountyPercent;
+        _sceneData.moneyText.text = _walletComponent.money.ToString();
+        _sceneData.killBountyText.text = _walletComponent.killBounty.ToString();
+        _sceneData.moneyIncomeText.text = _walletComponent.moneyIncome.ToString();*/
+    }
     public void Init()
     {
         // NewEntity() используется для создания новых сущностей в контексте мира.
@@ -18,13 +39,10 @@ public class InitSystem : IEcsInitSystem
         _playerMoveComponent.transform = _sceneData.player;
         ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
         ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
-        ref WalletComponent _walletComponent = ref playerEntity.Get<WalletComponent>();
-        _walletComponent.money = _sceneData.walletData.startMoney;
-        _walletComponent.moneyIncome = _sceneData.walletData.startMoneyIncome;
-        _walletComponent.killBounty = _sceneData.walletData.startCashBountyPercent;
-        _sceneData.moneyText.text = _walletComponent.money.ToString();
-        _sceneData.killBountyText.text = _walletComponent.killBounty.ToString();
-        _sceneData.moneyIncomeText.text = _walletComponent.moneyIncome.ToString();
+        ref KeyPressedEventComponent keyBoardInput = ref playerEntity.Get<KeyPressedEventComponent>();
+        keyBoardInput.keysPressed = new Dictionary<KeyCode, bool>();
+
+
 
         _sceneData.playerStats.hp.text = _sceneData.playerData.startHp.ToString();
         _sceneData.playerStats.manaShield.text = _sceneData.playerData.startManaShield.ToString();
@@ -43,6 +61,5 @@ public class InitSystem : IEcsInitSystem
         ref EnemyQueueToSpawnComponent _enemyQueueToSpawn = ref enemyEntity.Get<EnemyQueueToSpawnComponent>();
         _enemyQueueToSpawn.meleeEnemiesToSpawn = new Queue<EnemyWithPosition>();
         _enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
-
     }
 }

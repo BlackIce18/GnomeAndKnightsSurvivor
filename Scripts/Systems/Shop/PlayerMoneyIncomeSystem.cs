@@ -18,11 +18,18 @@ public class PlayerMoneyIncomeSystem : IEcsInitSystem, IEcsRunSystem
     {
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
-            ref WalletComponent wallet = ref _filter.Get1(0);
-            wallet.money += wallet.moneyIncome;
-            _sceneData.moneyText.text = wallet.money.ToString();
+            foreach(var walletComponent in _filter)
+            {
+                ref WalletComponent wallet = ref _filter.Get1(walletComponent);
+                ref var entity = ref _filter.GetEntity(walletComponent);
+                ref var walletUpdateComponent = ref entity.Get<WalletUpdateComponent>();
+                wallet.money += wallet.moneyIncome;
+                walletUpdateComponent.moneyIncome = wallet.moneyIncome;
+                walletUpdateComponent.money = wallet.money;
+            }
 
             _elapsedTime = 0;
         }
+        //_sceneData.moneyText.text = wallet.money.ToString();
     }
 }
