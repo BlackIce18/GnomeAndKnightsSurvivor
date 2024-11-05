@@ -10,9 +10,12 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
     {
         var shopEntity = _world.NewEntity();
         ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
-        ref ShopBuyItemComponent shopBuy = ref shopEntity.Get<ShopBuyItemComponent>();
+        ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
+        ref ResetShopCommandComponent resetShop = ref shopEntity.Get<ResetShopCommandComponent>();
+        
         shop.shopItems = new List<ShopItemData>();
         shopBuy.list = new List<ShopBuyItemCommand>();
+
 
         var walletEntity = _world.NewEntity();
         ref WalletComponent _walletComponent = ref walletEntity.Get<WalletComponent>();
@@ -39,8 +42,6 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         _playerMoveComponent.transform = _sceneData.player;
         ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
         ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
-        ref KeyPressedEventComponent keyBoardInput = ref playerEntity.Get<KeyPressedEventComponent>();
-        keyBoardInput.keysPressed = new Dictionary<KeyCode, bool>();
 
 
 

@@ -8,5 +8,4 @@ public struct ActiveShopItemsComponent
 public struct ActiveShopItemsUpdateEventComponent
 {
     public List<ShopItemData> shopItems;
-    public ShopItemData updatedShopItem;
 }

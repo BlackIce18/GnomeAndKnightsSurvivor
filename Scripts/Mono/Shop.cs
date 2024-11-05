@@ -1,6 +1,9 @@
+using Leopotam.Ecs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
@@ -23,5 +26,10 @@ public class Shop : MonoBehaviour
     public void ChangeTimer(float value)
     {
         TimerSlider.value = value;
+    }
+
+    public void AddOnClick(ShopUIButton shopUIButton, ICommand command)
+    {
+        shopUIButton.Button.onClick.AddListener(command.Execute);
     }
 }
