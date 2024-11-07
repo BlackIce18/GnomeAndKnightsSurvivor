@@ -35,9 +35,6 @@ public class ShopBuyItemCommand : ICommand
 
             _shopButtons[_buttonIndex].Button.interactable = false;
             _shopButtons[_buttonIndex].Image.sprite = null;
-            // ≈сли куплено, получить индекс(shopItem), сделать ту же
-            // кнопку shopButton не активной и убрать изображение
-
         }
     }
 

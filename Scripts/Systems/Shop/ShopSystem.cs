@@ -13,6 +13,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterUpdateEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
     private EcsFilter<ShopBuyItemCommandComponent, ResetShopCommandComponent> _filterShopBuyItemComponent = null;
+    private EcsFilter<TimerComponent> _timerComponent = null;
     private float _spawnTime;
     private float _elapsedTime = 0;
 
@@ -20,7 +21,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     {
         _shop = _sceneData.shop;
         UpdateShopItems();
-        ResetShopCommand resetCommand = new ResetShopCommand(_shop.ShopButtons, _filter, _filterWallet);
+        ResetShopCommand resetCommand = new ResetShopCommand(_timerComponent.GetEntity(0), _shop.ResetButton,  _shop.ShopButtons, _filter, _filterWallet.GetEntity(0));
         _shop.AddOnClick(_shop.ResetButton, resetCommand);
 
         foreach(var index in _filter)

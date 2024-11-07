@@ -8,6 +8,9 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
     private SceneData _sceneData;
     public void PreInit()
     {
+        var timerEntity = _world.NewEntity();
+        ref TimerComponent timer = ref timerEntity.Get<TimerComponent>();
+
         var shopEntity = _world.NewEntity();
         ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
         ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
