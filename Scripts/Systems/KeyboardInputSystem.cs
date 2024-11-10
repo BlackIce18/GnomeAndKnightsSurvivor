@@ -14,21 +14,20 @@ public class KeyboardInputSystem : IEcsRunSystem, IEcsInitSystem
     private ICommand f3;
     private ICommand f4;
     private ICommand r;
-    private EcsFilter<ShopBuyItemCommandComponent, ResetShopCommandComponent> _shopBuyItemComponent = null;
+    private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
 
     public void Init()
     {
-        ref List<ShopBuyItemCommand> shopItemsList = ref _shopBuyItemComponent.Get1(0).list;
-        alpha1 = shopItemsList[0];
-        alpha2 = shopItemsList[1];
-        alpha3 = shopItemsList[2];
-        alpha4 = shopItemsList[3];
-        f1 = shopItemsList[4];
-        f2 = shopItemsList[5];
-        f3 = shopItemsList[6];
-        f4 = shopItemsList[7];
-
-        ref ResetShopCommand resetShopCommand = ref _shopBuyItemComponent.Get2(0).resetShopCommand;
+        ref List<ShopBuyItemCommand> shopItemsList = ref _filterShopBuyItemComponent.Get1(0).list;
+        f1 = shopItemsList[0];
+        f2 = shopItemsList[1];
+        f3 = shopItemsList[2];
+        f4 = shopItemsList[3];
+        alpha1 = shopItemsList[4];
+        alpha2 = shopItemsList[5];
+        alpha3 = shopItemsList[6];
+        alpha4 = shopItemsList[7];
+        ref ResetShopCommand resetShopCommand = ref _filterShopBuyItemComponent.Get2(0).resetShopCommand;
         r = resetShopCommand;
     }
 

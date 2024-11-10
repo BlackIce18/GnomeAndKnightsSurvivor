@@ -14,8 +14,11 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         var shopEntity = _world.NewEntity();
         ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
         ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
-        ref ResetShopCommandComponent resetShop = ref shopEntity.Get<ResetShopCommandComponent>();
-        
+        ref ResetShopComponent resetShopComponent = ref shopEntity.Get<ResetShopComponent>();
+        resetShopComponent.rollsCount = 1;
+        resetShopComponent.shopEntity = shopEntity;
+        resetShopComponent.isAvailable = true;
+
         shop.shopItems = new List<ShopItemData>();
         shopBuy.list = new List<ShopBuyItemCommand>();
 

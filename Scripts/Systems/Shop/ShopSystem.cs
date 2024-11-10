@@ -7,22 +7,19 @@ using static UnityEditor.Progress;
 public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
-    private Shop _shop;
 
     private EcsFilter<ActiveShopItemsComponent> _filter = null;
     private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterUpdateEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
-    private EcsFilter<ShopBuyItemCommandComponent, ResetShopCommandComponent> _filterShopBuyItemComponent = null;
+    private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
     private EcsFilter<TimerComponent> _timerComponent = null;
     private float _spawnTime;
     private float _elapsedTime = 0;
+    private EcsFilter<ResetShopComponent, ResetShopUpdateComponent> _resetShopComponentFilter = null;
 
     public void PreInit()
     {
-        _shop = _sceneData.shop;
         UpdateShopItems();
-        ResetShopCommand resetCommand = new ResetShopCommand(_timerComponent.GetEntity(0), _shop.ResetButton,  _shop.ShopButtons, _filter, _filterWallet.GetEntity(0));
-        _shop.AddOnClick(_shop.ResetButton, resetCommand);
 
         foreach(var index in _filter)
         {
@@ -31,13 +28,11 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
             for (int i = 0; i < activeShopItemsComponent.shopItems.Count; i++)
             {
 
-                ShopBuyItemCommand shopBuyItemCommand = new ShopBuyItemCommand(_shop.ShopButtons, i, activeShopItemsComponent.shopItems[i], _filterWallet);
-                
-                _shop.AddOnClick(_shop.ShopButtons[i], shopBuyItemCommand);
+                ShopBuyItemCommand shopBuyItemCommand = new ShopBuyItemCommand(_sceneData.shop.ShopButtons, i, activeShopItemsComponent.shopItems[i], _filterWallet);
+
+                _sceneData.shop.AddOnClick(_sceneData.shop.ShopButtons[i], shopBuyItemCommand);
                 foreach (var j in _filterShopBuyItemComponent)
                 {
-                    ref var entity = ref _filterShopBuyItemComponent.GetEntity(j);
-                    entity.Get<ResetShopCommandComponent>().resetShopCommand = resetCommand;
                     _filterShopBuyItemComponent.Get1(j).list.Add(shopBuyItemCommand);
                 }
             }
@@ -46,18 +41,22 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 
     public void Init()
     {
-        _spawnTime = 60f;
-        _shop.TimerSlider.value = _spawnTime;
+        _spawnTime = _sceneData.shop.ResetShopData.ResetTimeSeconds;
+        _sceneData.shop.UpdateTimerSlider(_spawnTime);
     }
 
     public void Run()
     {
-        _shop.TimerSlider.value -= Time.deltaTime;
+        foreach(var i in _resetShopComponentFilter)
+        {
+            _sceneData.shop.UpdateTimerSlider(_spawnTime);
+            _elapsedTime = 0;
+        }
+        _sceneData.shop.TimerSlider.value -= Time.deltaTime;
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
             UpdateShopItems();
             _elapsedTime = 0;
-            _shop.TimerSlider.value = _spawnTime;
         }
 
         foreach(var i in _filterUpdateEvent)
@@ -70,14 +69,14 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 
     private List<ShopItemData> UpdateShopItems()
     {
-        _shop.TimerSlider.value = _spawnTime;
+        _sceneData.shop.UpdateTimerSlider(_spawnTime);
         List<ShopItemData> items = new List<ShopItemData>();
 
-        for (int i = 0; i < _shop.ShopButtons.Count; i++)
+        for (int i = 0; i < _sceneData.shop.ShopButtons.Count; i++)
         {
             ShopItemData shopItemData = GetRandomShopItem();
             items.Add(shopItemData);
-            _shop.ChangeImage(i, shopItemData.icon);
+            _sceneData.shop.ChangeImage(i, shopItemData.icon);
         }
 
         foreach (var shopComponent in _filter)
@@ -94,19 +93,19 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         foreach (var shopComponent in _filter)
         {
             ref EcsEntity entity = ref _filter.GetEntity(shopComponent);
-            var a = entity.Get<ActiveShopItemsComponent>().shopItems[index] = newShopItemData;
+            var shopItemData = entity.Get<ActiveShopItemsComponent>().shopItems[index] = newShopItemData;
         }
-        _shop.ChangeImage(index, newShopItemData.icon);
+        _sceneData.shop.ChangeImage(index, newShopItemData.icon);
     }
 
     private ShopItemData GetRandomShopItem()
     {
-        int randomNumber = Random.Range(0, _shop.ItemsData.Count);
+        int randomNumber = Random.Range(0, _sceneData.shop.ItemsData.Count);
         return GetShopItem(randomNumber);
     }
 
     private ShopItemData GetShopItem(int index)
     {
-        return _shop.ItemsData[index];
+        return _sceneData.shop.ItemsData[index];
     }
 }

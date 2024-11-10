@@ -31,6 +31,7 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new EnemySpawnerSystem());
         _systems.Add(new RemoveEnemySystem());
         _systems.Add(new ShopSystem());
+        _systems.Add(new ResetShopSystem());
         _systems.Add(new WalletUpdateUISystem());
         _systems.Inject(_sceneData);
         _systems.Inject(_enemyData);

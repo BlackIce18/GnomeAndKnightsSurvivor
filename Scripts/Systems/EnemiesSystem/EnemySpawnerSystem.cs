@@ -76,9 +76,11 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     public void UpdateSpawnIndexByTimer()
     {
         ref TimerComponent _currentTime = ref _timer.Get1(0);
+
         for (int i = 0; i < _sceneData.spawnTimings.enemies.Count; i++)
         {
             TimerComponent _enemySpawnTiming = _sceneData.spawnTimings.enemies[i].time;
+
             if (_currentTime.minutes == _enemySpawnTiming.minutes)
             {
                 if (_currentTime.seconds >= _enemySpawnTiming.seconds)

@@ -18,6 +18,7 @@ public class ShopBuyItemCommand : ICommand
     }
     private void TryToBuyItem()
     {
+        Debug.Log(_shopItemData.title);
         if (_wallet.Get1(0).money < _shopItemData.cost)
         {
             Debug.Log("Не хватает денег");

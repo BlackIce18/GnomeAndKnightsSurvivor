@@ -2,87 +2,88 @@ using Leopotam.Ecs;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct ResetShopCommandComponent
-{
-    public ResetShopCommand resetShopCommand;
-    public int price;
-}
 public class ResetShopCommand : ICommand
 {
-    private EcsFilter<ActiveShopItemsComponent> _activeShopItemsComponent;
-    private List<ShopUIButton> _shopButtons;
-    private int _rollsCount = 1;
-    private readonly int _freeStartResetsCount = 5;
-    private readonly int _freeBuyTime = 10;
-    private int _resetPrice = 0;
-    private int _resetPriceIncrease = 100;
-    private ShopUIButton _shopUIButton;
-    private EcsEntity _wallet;
-    private EcsEntity _time;
-    public ResetShopCommand(EcsEntity time, ShopUIButton shopUIButton, List<ShopUIButton> shopButtons, EcsFilter<ActiveShopItemsComponent> activeShopItemsComponent, EcsEntity wallet)
+    private EcsEntity _walletEntity;
+    private EcsEntity _shopEntity;
+    private SceneData _sceneData;
+
+    public ResetShopCommand(SceneData sceneData,
+        EcsEntity shopEntity,
+        EcsEntity walletEntity)
     {
-        _time = time;
-        _shopUIButton = shopUIButton;
-        _shopButtons = shopButtons;
-        _activeShopItemsComponent = activeShopItemsComponent;
-        _wallet = wallet;
+        _walletEntity = walletEntity;
+        _shopEntity = shopEntity;
+        _sceneData = sceneData;
     }
     private void ResetShopItems()
     {
-        foreach (var i in _activeShopItemsComponent)
-        {
-            ref ActiveShopItemsComponent activeShopItemsComponent = ref _activeShopItemsComponent.Get1(i);
-            ref var entityActiveShopItems = ref _activeShopItemsComponent.GetEntity(i);
+        ref var _activeShopItemsComponent = ref _shopEntity.Get<ActiveShopItemsComponent>();
+        ref ActiveShopItemsUpdateEventComponent activeShopItemsUpdateEventComponent = ref _shopEntity.Get<ActiveShopItemsUpdateEventComponent>();
+        activeShopItemsUpdateEventComponent.shopItems = _activeShopItemsComponent.shopItems;
 
-            ref ActiveShopItemsUpdateEventComponent activeShopItemsUpdateEventComponent = ref entityActiveShopItems.Get<ActiveShopItemsUpdateEventComponent>();
-            activeShopItemsUpdateEventComponent.shopItems = activeShopItemsComponent.shopItems;
-        }
-
-        foreach(ShopUIButton shopUIButton in _shopButtons) 
+        foreach (ShopUIButton shopUIButton in _sceneData.shop.ShopButtons) 
         {
             shopUIButton.Button.interactable = true;
         }
     }
+    private void UpdateWallet(ref WalletComponent walletComponent, ref ResetShopComponent resetShopComponent)
+    {
+        ref WalletUpdateComponent walletUpdateComponent = ref _walletEntity.Get<WalletUpdateComponent>();
+        walletComponent.money -= resetShopComponent.currentResetPrice;
+        walletUpdateComponent.money = walletComponent.money;
+        walletUpdateComponent.killBounty = walletComponent.killBounty;
+        walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
+    }
 
     private void Reset()
     {
-        if((_time.Get<TimerComponent>().minutes == 0) && (_time.Get<TimerComponent>().seconds <= _freeBuyTime) && (_time.Get<TimerComponent>().hours == 0))
+        ref var resetShopComponent = ref _shopEntity.Get<ResetShopComponent>();
+        
+        if(resetShopComponent.isAvailable)
         {
-            if ((_rollsCount <= _freeStartResetsCount))
+            ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
+            if ((walletComponent.money - resetShopComponent.currentResetPrice) >= 0)
+            {
+                UpdateWallet(ref walletComponent, ref resetShopComponent);
+                resetShopComponent.currentResetPrice += _sceneData.shop.ResetShopData.ResetPriceIncrease;
+                _shopEntity.Get<ResetShopUpdateComponent>();
+                
+                ResetShopItems();
+                resetShopComponent.rollsCount++;
+            }
+            else
+            {
+                Debug.Log("Не хватает денег!");
+            }
+        }
+
+
+
+
+        /*
+        ref var currentTime = ref _timerEntity.Get<TimerComponent>();
+
+        if ((currentTime.minutes == 0) && (currentTime.seconds <= _shop.ResetShopData.FreeBuyTime) && (currentTime.hours == 0))
+        {
+            ref var resetShopComponent = ref _shopEntity.Get<ResetShopComponent>();
+            ref var ResetShopUpdateComponent = ref _shopEntity.Get<ResetShopUpdateComponent>();
+
+            if ((resetShopComponent.rollsCount <= _shop.ResetShopData.FreeStartResetsCount))
             {
                 ResetShopItems();
-                _rollsCount++;
+                resetShopComponent.rollsCount++;
+                return;
             }
-            if(_rollsCount == _freeStartResetsCount)
+            if ((resetShopComponent.rollsCount - 1) == _shop.ResetShopData.FreeStartResetsCount)
             {
-                _shopUIButton.Button.interactable = false;
+                resetShopComponent.isInteractiveButton = false;
+                //_shopUIButton.Button.interactable = false;
+                return;
             }
-            return;
         }
+        */
 
-        ref WalletComponent walletComponent = ref _wallet.Get<WalletComponent>();
-        ref WalletUpdateComponent walletUpdateComponent = ref _wallet.Get<WalletUpdateComponent>();
-        Debug.Log(walletComponent.money);
-
-        if(_shopUIButton.Button.interactable == false)
-        {
-            _shopUIButton.Button.interactable = true;
-        }
-
-        if (walletComponent.money - _resetPrice >= _resetPrice)
-        {
-            ResetShopItems();
-            walletComponent.money -= _resetPrice;
-            walletUpdateComponent.money = walletComponent.money;
-            walletUpdateComponent.killBounty = walletComponent.killBounty;
-            walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
-
-            _resetPrice += _resetPriceIncrease;
-        }
-        else
-        {
-            Debug.Log("Не хватает денег!");
-        }
     }
     public void Execute()
     {
