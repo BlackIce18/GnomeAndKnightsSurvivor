@@ -12,6 +12,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterUpdateEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
     private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
+    private EcsFilter<ShopBuyItemCommandComponent, ShopBuyItemEventComponent> _filterShopBuyItemUpdateEvent = null;
     private EcsFilter<TimerComponent> _timerComponent = null;
     private float _spawnTime;
     private float _elapsedTime = 0;
@@ -27,10 +28,13 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 
             for (int i = 0; i < activeShopItemsComponent.shopItems.Count; i++)
             {
+                ShopUIButton currentShopUIButton = _sceneData.shop.ShopButtons[i];
+                ShopItemData shopItem = activeShopItemsComponent.shopItems[i];
+                EcsEntity shopEntity = _filterShopBuyItemComponent.GetEntity(0);
+                EcsEntity walletEntity = _filterWallet.GetEntity(0);
+                ShopBuyItemCommand shopBuyItemCommand = new ShopBuyItemCommand(currentShopUIButton, shopItem, shopEntity, walletEntity);
 
-                ShopBuyItemCommand shopBuyItemCommand = new ShopBuyItemCommand(_sceneData.shop.ShopButtons, i, activeShopItemsComponent.shopItems[i], _filterWallet);
-
-                _sceneData.shop.AddOnClick(_sceneData.shop.ShopButtons[i], shopBuyItemCommand);
+                _sceneData.shop.AddOnClick(currentShopUIButton, shopBuyItemCommand);
                 foreach (var j in _filterShopBuyItemComponent)
                 {
                     _filterShopBuyItemComponent.Get1(j).list.Add(shopBuyItemCommand);
@@ -43,6 +47,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     {
         _spawnTime = _sceneData.shop.ResetShopData.ResetTimeSeconds;
         _sceneData.shop.UpdateTimerSlider(_spawnTime);
+        _sceneData.shop.TimerSlider.maxValue = _sceneData.shop.ResetShopData.ResetTimeSeconds;
     }
 
     public void Run()
@@ -56,6 +61,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
             UpdateShopItems();
+            _sceneData.shop.ResetButton.Button.interactable = true;
             _elapsedTime = 0;
         }
 
@@ -65,6 +71,12 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
             UpdateShopItems();
             entity.Del<ActiveShopItemsUpdateEventComponent>();
         }
+
+        /*foreach(var i in _filterShopBuyItemUpdateEvent)
+        {
+            ref var entity = ref _filterShopBuyItemUpdateEvent.GetEntity(i);
+            entity.Del<ShopBuyItemEventComponent>();
+        }*/
     }
 
     private List<ShopItemData> UpdateShopItems()
@@ -72,10 +84,15 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         _sceneData.shop.UpdateTimerSlider(_spawnTime);
         List<ShopItemData> items = new List<ShopItemData>();
 
-        for (int i = 0; i < _sceneData.shop.ShopButtons.Count; i++)
+        List<ShopUIButton> UIbuttons = _sceneData.shop.ShopButtons;
+        for (int i = 0; i < UIbuttons.Count; i++)
         {
             ShopItemData shopItemData = GetRandomShopItem();
             items.Add(shopItemData);
+
+            UIbuttons[i].Button.interactable = true;
+            _filterShopBuyItemComponent.Get2(0).isAvailable = true;
+
             _sceneData.shop.ChangeImage(i, shopItemData.icon);
         }
 

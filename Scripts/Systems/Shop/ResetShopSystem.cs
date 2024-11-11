@@ -10,6 +10,7 @@ public class ResetShopSystem : IEcsPreInitSystem, IEcsRunSystem
     private EcsFilter<WalletComponent> _walletFilter = null;
     private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
     private EcsFilter<ResetShopComponent, ResetShopUpdateComponent> _resetShopComponentFilter = null;
+    private EcsFilter<PurchasedItemsComponent> _purchasedItemsFilter = null;
 
     public void PreInit()
     {
@@ -33,7 +34,17 @@ public class ResetShopSystem : IEcsPreInitSystem, IEcsRunSystem
 
             if ((currentTime.minutes == 0) && (currentTime.seconds <= _sceneData.shop.ResetShopData.FreeBuyTime) && (currentTime.hours == 0))
             {
-                resetShopComponent.currentResetPrice = 0;
+                bool itemPurchased = false;
+
+                if (_purchasedItemsFilter.Get1(0).items.Count > 0)
+                {
+                    itemPurchased = true;
+                }
+
+                if (!itemPurchased)
+                {
+                    resetShopComponent.currentResetPrice = 0;
+                }
 
                 if (resetShopComponent.isAvailable && (resetShopComponent.rollsCount - 1 >= _sceneData.shop.ResetShopData.FreeStartResetsCount))
                 {

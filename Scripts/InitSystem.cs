@@ -15,13 +15,16 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
         ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
         ref ResetShopComponent resetShopComponent = ref shopEntity.Get<ResetShopComponent>();
+        ref PurchasedItemsComponent purchasedItems = ref shopEntity.Get<PurchasedItemsComponent>();
         resetShopComponent.rollsCount = 1;
         resetShopComponent.shopEntity = shopEntity;
         resetShopComponent.isAvailable = true;
 
         shop.shopItems = new List<ShopItemData>();
         shopBuy.list = new List<ShopBuyItemCommand>();
-
+        shopBuy.isAvailable = true;
+        shopBuy.shopEntity = shopEntity;
+        purchasedItems.items = new List<ShopItemData>();
 
         var walletEntity = _world.NewEntity();
         ref WalletComponent _walletComponent = ref walletEntity.Get<WalletComponent>();
