@@ -31,7 +31,8 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref WalletUpdateComponent _walletUpdate = ref walletEntity.Get<WalletUpdateComponent>();
         _walletUpdate.money = _sceneData.walletData.startMoney;
         _walletUpdate.moneyIncome = _sceneData.walletData.startMoneyIncome;
-        _walletUpdate.killBounty = _sceneData.walletData.startCashBountyPercent;
+        _walletUpdate.killBounty = _sceneData.walletData.startKillBountyPercent;
+        _sceneData.shop.CurrentKillBounty = _sceneData.walletData.startKillBountyPercent;
         /*_walletComponent.money = _sceneData.walletData.startMoney;
         _walletComponent.moneyIncome = _sceneData.walletData.startMoneyIncome;
         _walletComponent.killBounty = _sceneData.walletData.startCashBountyPercent;

@@ -20,7 +20,7 @@ public class Shop : MonoBehaviour
     public ShopUIButton ResetButton { get {  return _resetButton; } }
     public Slider TimerSlider { get {  return _timerSlider; } }
     public TextMeshProUGUI ResetCurrentPriceText { get {  return _resetCurrentPriceText; } }
-
+    public int CurrentKillBounty { get; set; }
     public ResetShopData ResetShopData { get { return _resetShopData; } }
     public void ChangeImage(int index, Sprite newSprite)
     {

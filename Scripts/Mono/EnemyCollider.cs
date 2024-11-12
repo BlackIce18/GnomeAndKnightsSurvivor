@@ -9,8 +9,9 @@ public class EnemyCollider : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Bullet"))
         {
-            entity.Get<OnTriggerEnterComponent>().first = gameObject;
-            entity.Get<OnTriggerEnterComponent>().other = other.gameObject;
+            ref OnTriggerEnterComponent trigger = ref entity.Get<OnTriggerEnterComponent>();
+            trigger.first = gameObject;
+            trigger.other = other.gameObject;
         }
     }
 }

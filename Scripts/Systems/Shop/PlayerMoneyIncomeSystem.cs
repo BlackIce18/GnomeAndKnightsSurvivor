@@ -26,6 +26,7 @@ public class PlayerMoneyIncomeSystem : IEcsInitSystem, IEcsRunSystem
                 wallet.money += wallet.moneyIncome;
                 walletUpdateComponent.moneyIncome = wallet.moneyIncome;
                 walletUpdateComponent.money = wallet.money;
+                walletUpdateComponent.killBounty = wallet.killBounty;
             }
 
             _elapsedTime = 0;

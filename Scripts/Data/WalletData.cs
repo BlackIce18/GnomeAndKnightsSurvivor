@@ -6,5 +6,5 @@ public class WalletData : ScriptableObject
     public int startMoney;
     public int startMoneyIncome;
     public float incomeInterval;
-    public int startCashBountyPercent;
+    public int startKillBountyPercent;
 }

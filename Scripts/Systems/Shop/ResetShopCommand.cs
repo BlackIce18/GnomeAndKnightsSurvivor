@@ -27,10 +27,10 @@ public class ResetShopCommand : ICommand
             shopUIButton.Button.interactable = true;
         }
     }
-    private void UpdateWallet(ref WalletComponent walletComponent, ref ResetShopComponent resetShopComponent)
+    private void UpdateWallet(ref WalletComponent walletComponent, int price)
     {
         ref WalletUpdateComponent walletUpdateComponent = ref _walletEntity.Get<WalletUpdateComponent>();
-        walletComponent.money -= resetShopComponent.currentResetPrice;
+        walletComponent.money -= price;
         walletUpdateComponent.money = walletComponent.money;
         walletUpdateComponent.killBounty = walletComponent.killBounty;
         walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
@@ -45,7 +45,7 @@ public class ResetShopCommand : ICommand
             ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
             if ((walletComponent.money - resetShopComponent.currentResetPrice) >= 0)
             {
-                UpdateWallet(ref walletComponent, ref resetShopComponent);
+                UpdateWallet(ref walletComponent, resetShopComponent.currentResetPrice);
                 resetShopComponent.currentResetPrice += _sceneData.shop.ResetShopData.ResetPriceIncrease;
                 _shopEntity.Get<ResetShopUpdateComponent>();
                 
@@ -57,9 +57,6 @@ public class ResetShopCommand : ICommand
                 Debug.Log("Не хватает денег!");
             }
         }
-
-
-
 
         /*
         ref var currentTime = ref _timerEntity.Get<TimerComponent>();

@@ -54,7 +54,6 @@ public class MeleeEnemySpawnerSystem : IEnemySpawner
         EcsEntity enemyEnitity = _world.NewEntity();
         ref FollowComponent _followComponent = ref enemyEnitity.Get<FollowComponent>();
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
-        ref OnTriggerEnterComponent _hitEnemyComponent = ref enemyEnitity.Get<OnTriggerEnterComponent>();
         ref DefenceComponent _defenceComponent = ref enemyEnitity.Get<DefenceComponent>();
         ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();

@@ -24,12 +24,8 @@ public class DamageableSystem : IEcsRunSystem
                     defenceComponent.hp -= bulletComponent.attackType.CalculateDamage(defenceComponent, bulletComponent.damage);
 
                     bullet.AfterCollide();
-                    //Debug.Log(defenceComponent.hp);
                 }
-                _filter.GetEntity(i).Get<OnTriggerEnterComponent>().first = null;
-                _filter.GetEntity(i).Get<OnTriggerEnterComponent>().other = null;
             }
-
         }
     }
 }

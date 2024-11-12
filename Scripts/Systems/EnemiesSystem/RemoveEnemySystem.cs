@@ -5,9 +5,21 @@ using UnityEngine;
 
 public class RemoveEnemySystem : IEcsRunSystem
 {
-    private EcsFilter<DefenceComponent, EnemyComponent> _filter = null;
+    private SceneData _sceneData;
+    private EcsFilter<DefenceComponent, EnemyComponent, OnTriggerEnterComponent> _filter = null;
     private EcsFilter<EnemiesPoolComponent> _enemiesPool = null;
     private EcsFilter<OnTriggerEnterComponent> _onTriggerEnter = null;
+    private EcsFilter<WalletComponent> _walletComponent = null;
+
+    private void UpdateWallet(ref WalletComponent walletComponent, int price)
+    {
+        ref var walletEntity = ref _walletComponent.GetEntity(0);
+        ref WalletUpdateComponent walletUpdateComponent = ref walletEntity.Get<WalletUpdateComponent>();
+        walletComponent.money += price;
+        walletUpdateComponent.money = walletComponent.money;
+        walletUpdateComponent.killBounty = walletComponent.killBounty;
+        walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
+    }
 
     public void Run()
     {
@@ -19,8 +31,13 @@ public class RemoveEnemySystem : IEcsRunSystem
             if(defenceComponent.hp <= 0)
             {
                 enemyComponent.instance.SetActive(false);
-                enemyComponent.parentPool.AddToPool(enemyComponent); 
+                enemyComponent.parentPool.AddToPool(enemyComponent);
+                int killBounty = enemyComponent.enemyData.goldForKill * _sceneData.shop.CurrentKillBounty / 100;
+                
+                UpdateWallet(ref _walletComponent.Get1(0), killBounty);
             }
+
+            _filter.GetEntity(i).Del<OnTriggerEnterComponent>();
         }
     }
 }
