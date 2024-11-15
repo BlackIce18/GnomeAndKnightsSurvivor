@@ -7,8 +7,9 @@ using UnityEngine;
 public class GunData : ScriptableObject
 {
     public GameObject prefab;
-    public float attackRate;
+    public float attackInterval;
     public int minAttackRange;
     public int maxAttackRange;
     public AttackTypeData attackType;
+    public ShopItemData shopItemData;
 }

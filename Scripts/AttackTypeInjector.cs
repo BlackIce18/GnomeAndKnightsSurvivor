@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AttackTypeInjector
 {
-    public GunsInitSystem GunsInitSystem;
-    public AttackTypeInjector(GunsInitSystem gunsInitSystem) 
+    public GunsSpawnSystem GunsInitSystem;
+    public AttackTypeInjector(GunsSpawnSystem gunsInitSystem) 
     {
         GunsInitSystem = gunsInitSystem;
     }

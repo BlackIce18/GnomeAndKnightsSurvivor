@@ -3,10 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSpawnerSystem : IEcsRunSystem
+public class GunSpawnerSystem : IEcsInitSystem, IEcsRunSystem
 {
     private ActiveGuns _activeGuns;
     private EcsFilter<PurchasedItemsComponent> _purchasedItemsFilter;
+
+    public void Init()
+    {
+        Debug.Log(_activeGuns);
+    }
+
     //private EcsFilter<PurchasedItemsComponent, PurchaseItemEventComponent> _purchaseItemEventFilter;
     public void Run()
     {
@@ -18,7 +24,9 @@ public class GunSpawnerSystem : IEcsRunSystem
             for(int i = 0; i < purchasedItems.items.Count; i++)
             {
 
-                //_activeGuns.GunList.Add();
+                ActiveGunComponent activeGunComponent = new ActiveGunComponent();
+
+                _activeGuns.GunList.Add(activeGunComponent);
             }
 
             entity.Del<PurchasedItemsComponent>();

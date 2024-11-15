@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class ActiveGuns : MonoBehaviour
 {
-    [SerializeField] private List<ActiveGunComponent> guns = new List<ActiveGunComponent>();
+    public List<ActiveGunComponent> guns = new List<ActiveGunComponent>();
     public Transform parentForBullets;
 
-    public List<ActiveGunComponent> GunList { get { return guns; } private set { guns = value; } }
+    public List<ActiveGunComponent> GunList { get { return guns; } set { guns = value; } }
 }

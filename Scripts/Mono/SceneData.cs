@@ -24,4 +24,5 @@ public class SceneData : MonoBehaviour
     public Shop shop;
 
     public PlayerStats playerStats;
+    public GunsPrefabList gunsPrefabList;
 }

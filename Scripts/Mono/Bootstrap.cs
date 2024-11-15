@@ -17,7 +17,7 @@ public class Bootstrap : MonoBehaviour
         _systems = new EcsSystems(_world);
 
         _systems.Add(new InitSystem());
-        _systems.Add(new GunsInitSystem());
+        _systems.Add(new GunsSpawnSystem());
         _systems.Add(new MouseInputSystem());
         _systems.Add(new KeyboardInputSystem());
         _systems.Add(new PlayerMoveSystem());
@@ -33,6 +33,7 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new ShopSystem());
         _systems.Add(new ResetShopSystem());
         _systems.Add(new WalletUpdateUISystem());
+        _systems.Add(new GunSpawnerSystem());
         _systems.Inject(_sceneData);
         _systems.Inject(_enemyData);
         _systems.Inject(_activeGuns);
