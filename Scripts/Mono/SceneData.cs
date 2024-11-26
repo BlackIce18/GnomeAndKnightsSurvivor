@@ -12,7 +12,6 @@ public class SceneData : MonoBehaviour
     public Slider timerSlider;
     public Camera mainCamera;
     public EnemySpawnPatterns enemySpawnPatterns;
-    public Transform parentForBullets;
 
     public AttackTypeData normalTypeAttackData;
     public AttackTypeData piercingTypeAttackData;
@@ -25,4 +24,7 @@ public class SceneData : MonoBehaviour
 
     public PlayerStats playerStats;
     public GunsPrefabList gunsPrefabList;
+
+    public GameObject damageTextPrefab;
+    public GameObject damageTextParent;
 }

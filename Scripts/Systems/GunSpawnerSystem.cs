@@ -16,7 +16,7 @@ public class GunSpawnerSystem : IEcsInitSystem, IEcsRunSystem
     //private EcsFilter<PurchasedItemsComponent, PurchaseItemEventComponent> _purchaseItemEventFilter;
     public void Run()
     {
-        foreach(var index in _purchasedItemsFilter)
+        /*foreach(var index in _purchasedItemsFilter)
         {
             ref var purchasedItems = ref _purchasedItemsFilter.Get1(index);
             ref var entity = ref _purchasedItemsFilter.GetEntity(index);
@@ -30,6 +30,6 @@ public class GunSpawnerSystem : IEcsInitSystem, IEcsRunSystem
             }
 
             entity.Del<PurchasedItemsComponent>();
-        }
+        }*/
     }
 }

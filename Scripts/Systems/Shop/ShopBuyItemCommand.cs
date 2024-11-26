@@ -45,6 +45,7 @@ public class ShopBuyItemCommand : ICommand
                 _shopUIButton.Button.interactable = false;
                 _shopUIButton.Image.sprite = null;
                 _shopEntity.Get<ShopBuyItemEventComponent>().item = _shopItemData;
+                _shopEntity.Get<PurchasedItemsComponent>().items.Add(_shopItemData);
 
                 // !!!!!!!!!!!!!!
                 /*ref PurchasedItemsComponent purchasedItemsComponent = ref _shopEntity.Get<PurchasedItemsComponent>();

@@ -17,7 +17,7 @@ public class FireballAttackSystem : IEcsRunSystem
         for (int i = 0; i < _activeGuns.GunList.Count; i++)
         {
             ActiveGunComponent activeGunComponent = _activeGuns.GunList[i];
-            float positionY = activeGunComponent.gun.GunAndBulletData.gunData.prefab.transform.position.y;
+            float positionY = activeGunComponent.gun.GunAndBulletData.gunData.bulletPrefab.transform.position.y;
             Vector3 bulletEndPosition = new Vector3(input.mousePositionAtTerrain.x, positionY, input.mousePositionAtTerrain.z - 1.5f);// -1 из-за смещения по y на 1, -1 за движение по z
 
             for (int j = 0; j < activeGunComponent.count; j++)
@@ -29,6 +29,9 @@ public class FireballAttackSystem : IEcsRunSystem
                 }
 
                 activeGunComponent.gun.attackInterval = activeGunComponent.gun.GunAndBulletData.gunData.attackInterval;
+
+
+
                 activeBullets.list.Add(Spawn(bulletStartPosition, bulletEndPosition, _activeGuns.GunList[i].bulletPool));
             }
         }

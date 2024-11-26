@@ -33,27 +33,15 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         _walletUpdate.moneyIncome = _sceneData.walletData.startMoneyIncome;
         _walletUpdate.killBounty = _sceneData.walletData.startKillBountyPercent;
         _sceneData.shop.CurrentKillBounty = _sceneData.walletData.startKillBountyPercent;
-        /*_walletComponent.money = _sceneData.walletData.startMoney;
-        _walletComponent.moneyIncome = _sceneData.walletData.startMoneyIncome;
-        _walletComponent.killBounty = _sceneData.walletData.startCashBountyPercent;
-        _sceneData.moneyText.text = _walletComponent.money.ToString();
-        _sceneData.killBountyText.text = _walletComponent.killBounty.ToString();
-        _sceneData.moneyIncomeText.text = _walletComponent.moneyIncome.ToString();*/
     }
     public void Init()
     {
-        // NewEntity() используется для создания новых сущностей в контексте мира.
         EcsEntity playerEntity = _world.NewEntity();
-
-        // Get() возвращает существующий на сущности компонент. Если компонент не существовал - он будет добавлен автоматически.
-        // Следует обратить внимание на "ref" - компоненты должны обрабатываться по ссылке.
         ref MovableComponent _playerMoveComponent = ref playerEntity.Get<MovableComponent>();
         _playerMoveComponent.speed = _sceneData.playerData.playerSpeed;
         _playerMoveComponent.transform = _sceneData.player;
         ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
         ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
-
-
 
         _sceneData.playerStats.hp.text = _sceneData.playerData.startHp.ToString();
         _sceneData.playerStats.manaShield.text = _sceneData.playerData.startManaShield.ToString();
@@ -72,5 +60,9 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref EnemyQueueToSpawnComponent _enemyQueueToSpawn = ref enemyEntity.Get<EnemyQueueToSpawnComponent>();
         _enemyQueueToSpawn.meleeEnemiesToSpawn = new Queue<EnemyWithPosition>();
         _enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
+
+        EcsEntity damageTextEntity = _world.NewEntity();
+        ref ActiveDamageText activeDamageText = ref damageTextEntity.Get<ActiveDamageText>();
+        activeDamageText.damageTexts = new List<DamageTextRemoveTimeStruct>();
     }
 }
