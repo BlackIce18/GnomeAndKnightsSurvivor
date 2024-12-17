@@ -1,7 +1,9 @@
 using Leopotam.Ecs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.Progress;
 
 public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
@@ -9,7 +11,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     private SceneData _sceneData;
 
     private EcsFilter<ActiveShopItemsComponent> _filter = null;
-    private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterUpdateEvent = null;
+    private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterResetButtonPressedEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
     private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
     private EcsFilter<ShopBuyItemCommandComponent, ShopBuyItemEventComponent> _filterShopBuyItemUpdateEvent = null;
@@ -20,27 +22,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 
     public void PreInit()
     {
-        UpdateShopItems();
-
-        foreach(var index in _filter)
-        {
-            ref ActiveShopItemsComponent activeShopItemsComponent = ref _filter.Get1(index);
-
-            for (int i = 0; i < activeShopItemsComponent.shopItems.Count; i++)
-            {
-                ShopUIButton currentShopUIButton = _sceneData.shop.ShopButtons[i];
-                ShopItemData shopItem = activeShopItemsComponent.shopItems[i];
-                EcsEntity shopEntity = _filterShopBuyItemComponent.GetEntity(0);
-                EcsEntity walletEntity = _filterWallet.GetEntity(0);
-                ShopBuyItemCommand shopBuyItemCommand = new ShopBuyItemCommand(currentShopUIButton, shopItem, shopEntity, walletEntity);
-
-                _sceneData.shop.AddOnClick(currentShopUIButton, shopBuyItemCommand);
-                foreach (var j in _filterShopBuyItemComponent)
-                {
-                    _filterShopBuyItemComponent.Get1(j).list.Add(shopBuyItemCommand);
-                }
-            }
-        }
+        UpdateShop();
     }
 
     public void Init()
@@ -60,15 +42,16 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         _sceneData.shop.TimerSlider.value -= Time.deltaTime;
         if ((_elapsedTime += Time.deltaTime) >= _spawnTime)
         {
-            UpdateShopItems();
+            UpdateShop();
+            _sceneData.shop.UpdateTimerSlider(_spawnTime);
             _sceneData.shop.ResetButton.Button.interactable = true;
             _elapsedTime = 0;
         }
 
-        foreach(var i in _filterUpdateEvent)
+        foreach(var i in _filterResetButtonPressedEvent)
         {
-            ref var entity = ref _filterUpdateEvent.GetEntity(i);
-            UpdateShopItems();
+            ref var entity = ref _filterResetButtonPressedEvent.GetEntity(i);
+            UpdateShop();
             entity.Del<ActiveShopItemsUpdateEventComponent>();
         }
 
@@ -79,50 +62,69 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         }*/
     }
 
-    private List<ShopItemData> UpdateShopItems()
+    private void UpdateShop()
     {
-        _sceneData.shop.UpdateTimerSlider(_spawnTime);
+        //_sceneData.shop.UpdateTimerSlider(_spawnTime);
         List<ShopItemData> items = new List<ShopItemData>();
+        List<ShopUIButton> shopButtons = _sceneData.shop.ShopButtons;
 
-        List<ShopUIButton> UIbuttons = _sceneData.shop.ShopButtons;
-        for (int i = 0; i < UIbuttons.Count; i++)
+        for (int i = 0; i < shopButtons.Count; i++)
         {
+            ResetButton(shopButtons[i]);
+
             ShopItemData shopItemData = GetRandomShopItem();
             items.Add(shopItemData);
-
-            UIbuttons[i].Button.interactable = true;
+            _sceneData.shop.ChangeImage(i, shopItemData.icon);
             _filterShopBuyItemComponent.Get2(0).isAvailable = true;
 
-            _sceneData.shop.ChangeImage(i, shopItemData.icon);
+            ShopUIButton currentShopUIButton = shopButtons[i];
+            ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+            _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
+
+            foreach (var j in _filterShopBuyItemComponent)
+            {
+                _filterShopBuyItemComponent.Get1(j).list.Add(buyItemCommand);
+            }
         }
 
-        foreach (var shopComponent in _filter)
+        /*foreach (var index in _filter)
         {
-            ref EcsEntity entity = ref _filter.GetEntity(shopComponent);
-            entity.Get<ActiveShopItemsComponent>().shopItems = items;
-        }
+            ref ActiveShopItemsComponent activeShopItemsComponent = ref _filter.Get1(index);
+            activeShopItemsComponent.shopItems = items;
 
-        return items;
+            for (int i = 0; i < activeShopItemsComponent.shopItems.Count; i++)
+            {
+                ShopUIButton currentShopUIButton = _sceneData.shop.ShopButtons[i];
+                ShopBuyItemCommand buyItemCommand = new ShopBuyItemCommand(currentShopUIButton, activeShopItemsComponent.shopItems[i], _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+
+                _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
+
+                foreach (var j in _filterShopBuyItemComponent)
+                {
+                    _filterShopBuyItemComponent.Get1(j).list.Add(buyItemCommand);
+                }
+            }
+        }*/
+    }
+    private void ResetButton(ShopUIButton button)
+    {
+        button.Button.interactable = true;
+        var color = button.Image.color;
+        color.a = 1f;
+        button.Image.color = color;
     }
 
-    private void UpdateShopItem(int index, ShopItemData newShopItemData)
+    private void UpdateShopItem(int index, ShopItemGunData item)
     {
         foreach (var shopComponent in _filter)
         {
-            ref EcsEntity entity = ref _filter.GetEntity(shopComponent);
-            var shopItemData = entity.Get<ActiveShopItemsComponent>().shopItems[index] = newShopItemData;
+            _filter.GetEntity(shopComponent).Get<ActiveShopItemsComponent>().shopItems[index] = item;
         }
-        _sceneData.shop.ChangeImage(index, newShopItemData.icon);
+        _sceneData.shop.ChangeImage(index, item.icon);
     }
 
     private ShopItemData GetRandomShopItem()
     {
-        int randomNumber = Random.Range(0, _sceneData.shop.ItemsData.Count);
-        return GetShopItem(randomNumber);
-    }
-
-    private ShopItemData GetShopItem(int index)
-    {
-        return _sceneData.shop.ItemsData[index];
+        return _sceneData.shop.ItemsData[UnityEngine.Random.Range(0, _sceneData.shop.ItemsData.Count)];
     }
 }

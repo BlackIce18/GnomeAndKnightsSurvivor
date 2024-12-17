@@ -40,7 +40,7 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
 
             if (isExist == false)
             {
-                ActiveGunComponent activeGunComponent = new ActiveGunComponent();
+                /*ActiveGunComponent activeGunComponent = new ActiveGunComponent();
                 GameObject gunGameObject = GameObject.Instantiate(purchasedItem.item.datas.gunData.gunPrefab, _activeGuns.transform);
                 activeGunComponent.gun = gunGameObject.GetComponent<Gun>();
                 activeGunComponent.gun.attackInterval = purchasedItem.item.datas.gunData.attackInterval;
@@ -58,7 +58,7 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
                 }
 
                 purchasedItemsList.items.Add(purchasedItem.item);
-                _activeGuns.GunList.Add(activeGunComponent);
+                _activeGuns.GunList.Add(activeGunComponent);*/
             }
 
             entity.Del<ShopBuyItemEventComponent>();

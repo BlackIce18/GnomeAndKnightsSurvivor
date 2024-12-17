@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -7,6 +8,7 @@ public class EnemyData : ScriptableObject
     public GameObject prefab;
     public float speed;
     public int goldForKill;
+    public int Xp;
     public DefenceComponent defenceComponent;
-    public AttackComponent attackComponent;
+    public EnemyAttackComponent attackComponent;
 }

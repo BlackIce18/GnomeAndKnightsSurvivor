@@ -1,9 +1,17 @@
 using Leopotam.Ecs;
 using System.Collections.Generic;
+public struct ActiveShopItemsComponent
+{
+    public List<ShopItemGunData> shopItems;
+}
 
+public struct ActiveShopItemsUpdateEventComponent
+{
+    public List<ShopItemGunData> shopItems;
+}
 public struct ShopBuyItemCommandComponent
 {
-    public List<ShopBuyItemCommand> list;
+    public List<ShopBuyCommand> list;
     public bool isAvailable;
     public EcsEntity shopEntity;
 }

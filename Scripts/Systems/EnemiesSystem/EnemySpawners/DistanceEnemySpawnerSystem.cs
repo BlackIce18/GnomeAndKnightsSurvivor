@@ -37,7 +37,7 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
         ref MovableComponent _movableComponent = ref enemyEnitity.Get<MovableComponent>();
         ref OnTriggerEnterComponent _hitEnemyComponent = ref enemyEnitity.Get<OnTriggerEnterComponent>();
         ref DefenceComponent _defenceComponent = ref enemyEnitity.Get<DefenceComponent>();
-        ref AttackComponent _attackComponent = ref enemyEnitity.Get<AttackComponent>();
+        ref EnemyAttackComponent _attackComponent = ref enemyEnitity.Get<EnemyAttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
 
         GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _enemiesData.parentForEnemies);

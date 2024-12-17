@@ -12,7 +12,7 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref TimerComponent timer = ref timerEntity.Get<TimerComponent>();
 
         var shopEntity = _world.NewEntity();
-        ref ActiveShopItemsComponent shop = ref shopEntity.Get<ActiveShopItemsComponent>();
+        ref ActiveShopItemsComponent activeShopItems = ref shopEntity.Get<ActiveShopItemsComponent>();
         ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
         ref ResetShopComponent resetShopComponent = ref shopEntity.Get<ResetShopComponent>();
         ref PurchasedItemsComponent purchasedItems = ref shopEntity.Get<PurchasedItemsComponent>();
@@ -20,8 +20,8 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         resetShopComponent.shopEntity = shopEntity;
         resetShopComponent.isAvailable = true;
 
-        shop.shopItems = new List<ShopItemData>();
-        shopBuy.list = new List<ShopBuyItemCommand>();
+        activeShopItems.shopItems = new List<ShopItemGunData>();
+        shopBuy.list = new List<ShopBuyCommand>();
         shopBuy.isAvailable = true;
         shopBuy.shopEntity = shopEntity;
         purchasedItems.items = new List<ShopItemData>();

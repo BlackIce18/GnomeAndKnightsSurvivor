@@ -12,5 +12,5 @@ public class GunData : ScriptableObject
     public int minAttackRange;
     public int maxAttackRange;
     public AttackTypeData attackType;
-    public ShopItemData shopItemData;
+    public ShopItemGunData shopItemData;
 }
