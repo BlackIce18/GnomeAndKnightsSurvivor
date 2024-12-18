@@ -14,8 +14,6 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
     private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterResetButtonPressedEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
     private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
-    private EcsFilter<ShopBuyItemCommandComponent, ShopBuyItemEventComponent> _filterShopBuyItemUpdateEvent = null;
-    private EcsFilter<TimerComponent> _timerComponent = null;
     private float _spawnTime;
     private float _elapsedTime = 0;
     private EcsFilter<ResetShopComponent, ResetShopUpdateComponent> _resetShopComponentFilter = null;
@@ -78,7 +76,23 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
             _filterShopBuyItemComponent.Get2(0).isAvailable = true;
 
             ShopUIButton currentShopUIButton = shopButtons[i];
-            ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+            ICommand buyItemCommand;
+            switch (shopItemData)
+            {
+                case ShopItemGunData gunData:
+                    Debug.Log("1");
+                    buyItemCommand = new ShopBuyCommand(currentShopUIButton, gunData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+                    break;
+                case ShopItemIncomeData incomeData:
+                    buyItemCommand = new ShopBuyBuffCommand(currentShopUIButton, incomeData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+                    Debug.Log("2");
+                    break;
+                default:
+                    buyItemCommand = new ShopBuyBuffCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+                    break;
+            }
+
+            //ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
             _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
 
             foreach (var j in _filterShopBuyItemComponent)

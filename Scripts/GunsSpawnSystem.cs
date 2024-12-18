@@ -4,12 +4,11 @@ using UnityEngine;
 public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
 {
     private EcsWorld _world;
-    private SceneData _sceneData;
     private ActiveGuns _activeGuns;
 
     private AttackTypeInjector _attackTypeInjector;
     private EcsFilter<PurchasedItemsComponent> _purchasedItemsFilter;
-    private EcsFilter<ShopBuyItemEventComponent> _shopBuyItem;
+    private EcsFilter<ShopBuyGunEventComponent> _shopBuyItemFilter;
     public void Init()
     {
         _attackTypeInjector = new AttackTypeInjector(this);
@@ -19,16 +18,17 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
 
     public void Run()
     {
-        foreach (var index in _shopBuyItem)
+        foreach (var index in _shopBuyItemFilter)
         {
-            ref var purchasedItem = ref _shopBuyItem.Get1(index);
-            ref var entity = ref _shopBuyItem.GetEntity(index);
+            ref var _shopBuyItem = ref _shopBuyItemFilter.Get1(index);
+
+            ref var entity = ref _shopBuyItemFilter.GetEntity(index);
             ref var purchasedItemsList = ref _purchasedItemsFilter.Get1(0);
 
             bool isExist = false;
             for (int i = 0; i < _activeGuns.GunList.Count; i++)
             {
-                if (_activeGuns.GunList[i].gun.GunAndBulletData.gunData.shopItemData == purchasedItem.item)
+                if (_activeGuns.GunList[i].gun.GunAndBulletData.gunData.shopItemData == _shopBuyItem.item)
                 {
                     ActiveGunComponent activeGunComponent = _activeGuns.guns[i];
                     activeGunComponent.count++;
@@ -40,10 +40,10 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
 
             if (isExist == false)
             {
-                /*ActiveGunComponent activeGunComponent = new ActiveGunComponent();
-                GameObject gunGameObject = GameObject.Instantiate(purchasedItem.item.datas.gunData.gunPrefab, _activeGuns.transform);
+                ActiveGunComponent activeGunComponent = new ActiveGunComponent();
+                GameObject gunGameObject = GameObject.Instantiate(_shopBuyItem.item.datas.gunData.gunPrefab, _activeGuns.transform);
                 activeGunComponent.gun = gunGameObject.GetComponent<Gun>();
-                activeGunComponent.gun.attackInterval = purchasedItem.item.datas.gunData.attackInterval;
+                activeGunComponent.gun.attackInterval = _shopBuyItem.item.datas.gunData.attackInterval;
                 activeGunComponent.count++;
                 //activeGunComponent.gun.GunAndBulletData.gunData = purchasedItems.items[j].datas.gunData;
 
@@ -57,11 +57,11 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
                     activeGunComponent.bulletPool.AddToPool(bulletComponent);
                 }
 
-                purchasedItemsList.items.Add(purchasedItem.item);
-                _activeGuns.GunList.Add(activeGunComponent);*/
+                purchasedItemsList.items.Add(_shopBuyItem.item);
+                _activeGuns.GunList.Add(activeGunComponent);
             }
 
-            entity.Del<ShopBuyItemEventComponent>();
+            entity.Del<ShopBuyGunEventComponent>();
         }
     }
 

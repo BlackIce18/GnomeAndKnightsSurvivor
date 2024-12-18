@@ -21,7 +21,7 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         resetShopComponent.isAvailable = true;
 
         activeShopItems.shopItems = new List<ShopItemGunData>();
-        shopBuy.list = new List<ShopBuyCommand>();
+        shopBuy.list = new List<ICommand>();
         shopBuy.isAvailable = true;
         shopBuy.shopEntity = shopEntity;
         purchasedItems.items = new List<ShopItemData>();

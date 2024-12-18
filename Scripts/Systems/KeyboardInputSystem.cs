@@ -23,7 +23,7 @@ public class KeyboardInputSystem : IEcsRunSystem, IEcsInitSystem
 
     public void Init()
     {
-        ref List<ShopBuyCommand> shopItemsList = ref _filterShopBuyItemComponent.Get1(0).list;
+        ref List<ICommand> shopItemsList = ref _filterShopBuyItemComponent.Get1(0).list;
         s1 = shopItemsList[0];
         s2 = shopItemsList[1];
         s3 = shopItemsList[2];
