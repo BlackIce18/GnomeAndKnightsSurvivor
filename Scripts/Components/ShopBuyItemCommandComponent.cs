@@ -22,10 +22,6 @@ public struct ShopBuyItemEventComponent
 {
     public ShopItemData item;
 }
-public struct ShopBuyGunEventComponent
-{
-    public ShopItemGunData item;
-}
 // Список купленных оружий, улучшений
 public struct PurchasedItemsComponent
 {

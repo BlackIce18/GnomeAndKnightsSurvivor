@@ -21,7 +21,8 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new MouseInputSystem());
         _systems.Add(new KeyboardInputSystem());
         _systems.Add(new PlayerMoveSystem());
-        _systems.Add(new PlayerMoneyIncomeSystem());
+        _systems.Add(new MoneyIncomeSystem());
+        _systems.Add(new KillBountySystem());
         _systems.Add(new TimerSystem());
         _systems.Add(new FireballAttackSystem());
         _systems.Add(new BulletMoverSystem());

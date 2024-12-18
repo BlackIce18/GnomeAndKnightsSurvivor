@@ -3,22 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RemoveEnemySystem : IEcsRunSystem
+public class RemoveEnemySystem : IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
     private EcsFilter<DefenceComponent, EnemyComponent, OnTriggerEnterComponent> _filter = null;
     private EcsFilter<EnemiesPoolComponent> _enemiesPool = null;
     private EcsFilter<OnTriggerEnterComponent> _onTriggerEnter = null;
     private EcsFilter<WalletComponent> _walletComponent = null;
+    private EcsEntity _walletEntity;
 
-    private void UpdateWallet(ref WalletComponent walletComponent, int price)
+    public void Init()
     {
-        ref var walletEntity = ref _walletComponent.GetEntity(0);
-        ref WalletUpdateComponent walletUpdateComponent = ref walletEntity.Get<WalletUpdateComponent>();
-        walletComponent.money += price;
-        walletUpdateComponent.money = walletComponent.money;
-        walletUpdateComponent.killBounty = walletComponent.killBounty;
-        walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
+        _walletEntity = _walletComponent.GetEntity(0);
     }
 
     public void Run()
@@ -32,12 +28,13 @@ public class RemoveEnemySystem : IEcsRunSystem
             {
                 enemyComponent.instance.SetActive(false);
                 enemyComponent.parentPool.AddToPool(enemyComponent);
-                int killBounty = enemyComponent.enemyData.goldForKill * _sceneData.shop.CurrentKillBounty / 100;
-                
-                UpdateWallet(ref _walletComponent.Get1(0), killBounty);
+
+                _walletEntity.Get<KillBountyEventComponent>().killBounty = enemyComponent.enemyData.goldForKill;
             }
 
             _filter.GetEntity(i).Del<OnTriggerEnterComponent>();
         }
     }
+
+
 }

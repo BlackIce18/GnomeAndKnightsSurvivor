@@ -52,17 +52,10 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
             UpdateShop();
             entity.Del<ActiveShopItemsUpdateEventComponent>();
         }
-
-        /*foreach(var i in _filterShopBuyItemUpdateEvent)
-        {
-            ref var entity = ref _filterShopBuyItemUpdateEvent.GetEntity(i);
-            entity.Del<ShopBuyItemEventComponent>();
-        }*/
     }
 
     private void UpdateShop()
     {
-        //_sceneData.shop.UpdateTimerSlider(_spawnTime);
         List<ShopItemData> items = new List<ShopItemData>();
         List<ShopUIButton> shopButtons = _sceneData.shop.ShopButtons;
 
@@ -76,23 +69,7 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
             _filterShopBuyItemComponent.Get2(0).isAvailable = true;
 
             ShopUIButton currentShopUIButton = shopButtons[i];
-            ICommand buyItemCommand;
-            switch (shopItemData)
-            {
-                case ShopItemGunData gunData:
-                    Debug.Log("1");
-                    buyItemCommand = new ShopBuyCommand(currentShopUIButton, gunData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
-                    break;
-                case ShopItemIncomeData incomeData:
-                    buyItemCommand = new ShopBuyBuffCommand(currentShopUIButton, incomeData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
-                    Debug.Log("2");
-                    break;
-                default:
-                    buyItemCommand = new ShopBuyBuffCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
-                    break;
-            }
-
-            //ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
+            ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
             _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
 
             foreach (var j in _filterShopBuyItemComponent)
@@ -100,25 +77,6 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
                 _filterShopBuyItemComponent.Get1(j).list.Add(buyItemCommand);
             }
         }
-
-        /*foreach (var index in _filter)
-        {
-            ref ActiveShopItemsComponent activeShopItemsComponent = ref _filter.Get1(index);
-            activeShopItemsComponent.shopItems = items;
-
-            for (int i = 0; i < activeShopItemsComponent.shopItems.Count; i++)
-            {
-                ShopUIButton currentShopUIButton = _sceneData.shop.ShopButtons[i];
-                ShopBuyItemCommand buyItemCommand = new ShopBuyItemCommand(currentShopUIButton, activeShopItemsComponent.shopItems[i], _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
-
-                _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
-
-                foreach (var j in _filterShopBuyItemComponent)
-                {
-                    _filterShopBuyItemComponent.Get1(j).list.Add(buyItemCommand);
-                }
-            }
-        }*/
     }
     private void ResetButton(ShopUIButton button)
     {

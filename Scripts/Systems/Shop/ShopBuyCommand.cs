@@ -26,20 +26,12 @@ public abstract class ShopPurchaseCommand<T> : ICommand where T : ShopItemData
 
     public abstract void Execute();
 }
-public class ShopBuyCommand : ShopPurchaseCommand<ShopItemGunData>, ICommand
+public class ShopBuyCommand : ShopPurchaseCommand<ShopItemData>, ICommand
 {
     private bool _canBuy = true;
-    private protected ShopUIButton _shopUIButton;
-    private protected ShopItemGunData _shopItemData;
-    private protected EcsEntity _walletEntity;
-    private protected EcsEntity _shopEntity;
-    public ShopBuyCommand(ShopUIButton shopUIButton, ShopItemGunData shopGunData, EcsEntity shopEntity, EcsEntity walletEntity)
+    public ShopBuyCommand(ShopUIButton shopUIButton, ShopItemData shopGunData, EcsEntity shopEntity, EcsEntity walletEntity)
         : base(shopUIButton, shopGunData, shopEntity, walletEntity)
     {
-        _shopUIButton = shopUIButton;
-        _shopItemData = shopGunData;
-        _shopEntity = shopEntity;
-        _walletEntity = walletEntity;
     }
 
     public override void Execute()
@@ -67,53 +59,13 @@ public class ShopBuyCommand : ShopPurchaseCommand<ShopItemGunData>, ICommand
                 _shopUIButton.Image.color = color;
 
                 
-                _shopEntity.Get<ShopBuyGunEventComponent>().item = _shopItemData;
+                _shopEntity.Get<ShopBuyItemEventComponent>().item = _shopItemData;
                 _shopEntity.Get<PurchasedItemsComponent>().items.Add(_shopItemData);
                 _canBuy = false;
                 // !!!!!!!!!!!!!!
                 /*ref PurchasedItemsComponent purchasedItemsComponent = ref _shopEntity.Get<PurchasedItemsComponent>();
                 purchasedItemsComponent.items = new List<ShopItemData>() { _shopItemData };*/
                 // !!!!!!!!!!!!!!
-            }
-        }
-    }
-}
-
-public class ShopBuyBuffCommand : ShopPurchaseCommand<ShopItemData>, ICommand
-{
-    private bool _canBuy = true;
-    public ShopBuyBuffCommand(ShopUIButton shopUIButton, ShopItemData shopItemData, EcsEntity shopEntity, EcsEntity walletEntity) : base(shopUIButton, shopItemData, shopEntity, walletEntity)
-    {
-    }
-
-    public override void Execute()
-    {
-        if (_canBuy)
-        {
-            ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
-            ref ShopBuyItemCommandComponent shopBuyItemComponent = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
-
-            if (walletComponent.money < _shopItemData.cost)
-            {
-                Debug.Log("Не хватает денег");
-                return;
-            }
-
-            if (_shopItemData.cost > 0)
-            {
-                UpdateWallet(ref walletComponent, _shopItemData.cost);
-
-                _shopUIButton.Button.interactable = false;
-                _shopUIButton.Image.sprite = null;
-
-                Color color = _shopUIButton.Image.color;
-                color.a = 0f;
-                _shopUIButton.Image.color = color;
-
-                Debug.Log("buff");
-                _shopEntity.Get<ShopBuyItemEventComponent>().item = _shopItemData;
-                _shopEntity.Get<PurchasedItemsComponent>().items.Add(_shopItemData);
-                _canBuy = false;
             }
         }
     }
