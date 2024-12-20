@@ -28,4 +28,7 @@ public class SceneData : MonoBehaviour
 
     public GameObject damageTextPrefab;
     public GameObject damageTextParent;
+
+    public HealthAndManaShieldBar healthBar;
+    public HealthAndManaShieldBar manaShieldBar;
 }

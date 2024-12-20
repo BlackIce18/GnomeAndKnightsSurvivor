@@ -58,7 +58,6 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         for (int i = 0; i < shopButtons.Count; i++)
         {
             ResetButton(shopButtons[i]);
-            Debug.Log("1");
             ShopItemData shopItemData = GetRandomShopItem();
             items.Add(shopItemData);
             _sceneData.shop.ChangeImage(i, shopItemData.icon);
