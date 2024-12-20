@@ -21,6 +21,7 @@ public class SceneData : MonoBehaviour
     public TextMeshProUGUI killBountyText;
     public WalletData walletData;
     public Shop shop;
+    public BorderColorsData shopBorderColorsData;
 
     public PlayerStats playerStats;
     public GunsPrefabList gunsPrefabList;

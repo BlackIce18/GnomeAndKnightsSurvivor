@@ -1,15 +1,11 @@
 using Leopotam.Ecs;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
-
+    private EcsWorld _world;
     private EcsFilter<ActiveShopItemsComponent> _filter = null;
     private EcsFilter<ActiveShopItemsComponent, ActiveShopItemsUpdateEventComponent> _filterResetButtonPressedEvent = null;
     private EcsFilter<WalletComponent> _filterWallet = null;
@@ -62,15 +58,22 @@ public class ShopSystem : IEcsPreInitSystem, IEcsInitSystem, IEcsRunSystem
         for (int i = 0; i < shopButtons.Count; i++)
         {
             ResetButton(shopButtons[i]);
-
+            Debug.Log("1");
             ShopItemData shopItemData = GetRandomShopItem();
             items.Add(shopItemData);
             _sceneData.shop.ChangeImage(i, shopItemData.icon);
             _filterShopBuyItemComponent.Get2(0).isAvailable = true;
 
             ShopUIButton currentShopUIButton = shopButtons[i];
+
             ShopBuyCommand buyItemCommand = new ShopBuyCommand(currentShopUIButton, shopItemData, _filterShopBuyItemComponent.GetEntity(0), _filterWallet.GetEntity(0));
             _sceneData.shop.AddOnClick(currentShopUIButton, buyItemCommand);
+
+            EcsEntity borderColorEventEntity = _world.NewEntity();
+            ref BorderColorComponent borderColorEvent = ref borderColorEventEntity.Get<BorderColorComponent>();
+            borderColorEvent.shopUIButton = currentShopUIButton;
+            borderColorEvent.rarity = shopItemData.rarity;
+            borderColorEventEntity.Get<BorderUpdateColorEventComponent>();
 
             foreach (var j in _filterShopBuyItemComponent)
             {
