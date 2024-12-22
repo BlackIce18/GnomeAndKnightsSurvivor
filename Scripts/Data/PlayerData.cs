@@ -9,4 +9,6 @@ public class PlayerData : ScriptableObject
     public int startArmor;
     public int startHpRegen;
     public int startManaShieldRegen;
+    public float timeToStartHpRegenAfterTakeDamage;
+    public float timeToStartManaShieldRegenAfterTakeDamage;
 }
