@@ -1,26 +1,29 @@
 using Leopotam.Ecs;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-public class HpRegenSystem : IEcsRunSystem
+
+public class ManaShieldRegenSystem : IEcsRunSystem
 {
     private float _elapsedTimeToStartRegen = 0;
     private float _elapsedTimeToRegen = 0;
-    private EcsFilter<PlayerHealthComponent, CurrentPlayerCharacteristicsComponent> _playerCharacteristicsFilter;
-    private EcsFilter<PlayerHealthComponent, TakeDamageEventComponent> _playerHealthFilter;
+    private EcsFilter<PlayerManaShieldComponent, CurrentPlayerCharacteristicsComponent> _playerCharacteristicsFilter;
+    private EcsFilter<PlayerManaShieldComponent, TakeDamageEventComponent> _playerManaShieldFilter;
 
     private bool _canRegen = true;
 
-    //private bool _test = true;
+    private bool _test = true;
 
     public void Run()
     {
-        /*if (_test)
+        if (_test)
         {
             ref var _playerCharacteristicsFilterEntity = ref _playerCharacteristicsFilter.GetEntity(0);
             _playerCharacteristicsFilterEntity.Get<TakeDamageEventComponent>().damage = 150;
-            _playerCharacteristicsFilterEntity.Get<PlayerHealthComponent>();
+            _playerCharacteristicsFilterEntity.Get<PlayerManaShieldComponent>();
             _test = false;
-        }*/
-        foreach (var i in  _playerHealthFilter)
+        }
+        foreach (var i in _playerManaShieldFilter)
         {
             _elapsedTimeToStartRegen = 0;
             _canRegen = false;
@@ -29,26 +32,26 @@ public class HpRegenSystem : IEcsRunSystem
 
         foreach (var i in _playerCharacteristicsFilter)
         {
-            ref var playerHp = ref _playerCharacteristicsFilter.Get1(i);
+            ref var playerManaSield = ref _playerCharacteristicsFilter.Get1(i);
             ref var playerCharacteristics = ref _playerCharacteristicsFilter.Get2(i);
             ref var entity = ref _playerCharacteristicsFilter.GetEntity(i);
 
-            if (playerHp.currentHealthPoints < playerHp.maxHealthPoints)
+            if (playerManaSield.currentManaShield < playerManaSield.maxManaShield)
             {
-                if ((_elapsedTimeToStartRegen += Time.deltaTime) >= playerCharacteristics.timeToStartHpRegenAfterTakeDamage)
+                if ((_elapsedTimeToStartRegen += Time.deltaTime) >= playerCharacteristics.timeToStartManaShieldRegenAfterTakeDamage)
                 {
                     _canRegen = true;
                 }
                 if (_canRegen && ((_elapsedTimeToRegen += Time.deltaTime) >= 1))
                 {
-                    playerHp.currentHealthPoints += playerCharacteristics.healthPointRegen;
-                    entity.Get<PlayerHealthUpdateEventComponent>().newHealthPoints = playerHp.currentHealthPoints;
+                    playerManaSield.currentManaShield += playerCharacteristics.healthPointRegen;
+                    entity.Get<PlayerManaShieldUpdateEventComponent>().newManaShield = playerManaSield.currentManaShield;
 
                     _elapsedTimeToRegen = 0;
                 }
             }
 
-            if (playerHp.currentHealthPoints == playerHp.maxHealthPoints)
+            if (playerManaSield.currentManaShield == playerManaSield.maxManaShield)
             {
                 _canRegen = false;
                 _elapsedTimeToStartRegen = 0;

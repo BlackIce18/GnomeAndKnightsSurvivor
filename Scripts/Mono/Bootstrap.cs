@@ -18,11 +18,11 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new GunsSpawnSystem());
         _systems.Add(new MouseInputSystem());
         _systems.Add(new KeyboardInputSystem());
-        _systems.Add(new HealthBarSystem());
-        _systems.Add(new ManaShieldBarSystem());
         _systems.Add(new PlayerMoveSystem());
+        _systems.Add(new PlayerTakeDamageSystem());
         _systems.Add(new MoneyIncomeSystem());
         _systems.Add(new KillBountySystem());
+        _systems.Add(new HpRegenSystem());
         _systems.Add(new TimerSystem());
         _systems.Add(new FireballAttackSystem());
         _systems.Add(new BulletMoverSystem());
@@ -35,6 +35,9 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new ShopSystem());
         _systems.Add(new ResetShopSystem());
         _systems.Add(new BorderColorsSystem());
+        _systems.Add(new ManaShieldRegenSystem());
+        _systems.Add(new HealthBarSystem());
+        _systems.Add(new ManaShieldBarSystem());
         _systems.Add(new WalletUpdateUISystem());
         _systems.Add(new GunSpawnerSystem());
         _systems.Inject(_sceneData);

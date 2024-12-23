@@ -27,9 +27,9 @@ public class HealthBarSystem : IEcsInitSystem, IEcsRunSystem
             ref var playerHealthComponent = ref _playerHealthUpdateEventFilter.Get1(index);
             ref var PlayerHealthUpdateEventComponent = ref _playerHealthUpdateEventFilter.Get2(index);
 
-            playerHealthComponent.currentHealth = PlayerHealthUpdateEventComponent.newHealth;
-            _sceneData.healthBar.Slider.value = playerHealthComponent.currentHealth;
-            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealth + "/" + playerHealthComponent.maxHealth;
+            playerHealthComponent.currentHealthPoints = PlayerHealthUpdateEventComponent.newHealthPoints;
+            _sceneData.healthBar.Slider.value = playerHealthComponent.currentHealthPoints;
+            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealthPoints + "/" + playerHealthComponent.maxHealthPoints;
             entity.Del<PlayerHealthUpdateEventComponent>();
         }
     }
@@ -41,9 +41,9 @@ public class HealthBarSystem : IEcsInitSystem, IEcsRunSystem
             ref var playerHealthComponent = ref _playerMaxHealthUpdateEventFilter.Get1(index);
             ref var playerMaxHealthUpdateEventComponent = ref _playerMaxHealthUpdateEventFilter.Get2(index);
 
-            playerHealthComponent.maxHealth = playerMaxHealthUpdateEventComponent.newMaxHealth;
-            _sceneData.healthBar.Slider.maxValue = playerHealthComponent.maxHealth;
-            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealth + "/" + playerHealthComponent.maxHealth;
+            playerHealthComponent.maxHealthPoints = playerMaxHealthUpdateEventComponent.newMaxHealthPoints;
+            _sceneData.healthBar.Slider.maxValue = playerHealthComponent.maxHealthPoints;
+            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealthPoints + "/" + playerHealthComponent.maxHealthPoints;
             entity.Del<PlayerMaxHealthUpdateEventComponent>();
         }
     }

@@ -1,11 +1,5 @@
 using Leopotam.Ecs;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-public struct TakeDamageEventComponent
-{
-    public int damage;
-}
+
 
 public class PlayerTakeDamageSystem : IEcsRunSystem
 {
@@ -20,7 +14,7 @@ public class PlayerTakeDamageSystem : IEcsRunSystem
             ref var playerHealthEntity = ref _playerHealthFilter.GetEntity(index);
 
             ref var playerHealthUpdateEvent = ref playerHealthEntity.Get<PlayerHealthUpdateEventComponent>();
-            playerHealthUpdateEvent.newHealth = playerHealth.currentHealth - damage.damage;
+            playerHealthUpdateEvent.newHealthPoints = playerHealth.currentHealthPoints - damage.damage;
 
             playerHealthEntity.Del<TakeDamageEventComponent>();
         }

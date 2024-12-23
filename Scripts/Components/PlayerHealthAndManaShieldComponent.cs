@@ -1,16 +1,16 @@
 public struct PlayerHealthComponent
 {
-    public int currentHealth;
-    public int maxHealth;
+    public int currentHealthPoints;
+    public int maxHealthPoints;
 }
 
 public struct PlayerHealthUpdateEventComponent
 {
-    public int newHealth;
+    public int newHealthPoints;
 }
 public struct PlayerMaxHealthUpdateEventComponent
 {
-    public int newMaxHealth;
+    public int newMaxHealthPoints;
 }
 public struct PlayerManaShieldComponent
 {

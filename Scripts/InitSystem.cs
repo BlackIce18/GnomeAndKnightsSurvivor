@@ -45,11 +45,11 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
 
 
         ref PlayerHealthComponent playerHealthComponent = ref playerEntity.Get<PlayerHealthComponent>();
-        playerHealthComponent.currentHealth = _sceneData.playerData.startHp;
+        playerHealthComponent.currentHealthPoints = _sceneData.playerData.startHp;
         ref PlayerMaxHealthUpdateEventComponent playerMaxHealthUpdateEventComponent = ref playerEntity.Get<PlayerMaxHealthUpdateEventComponent>();
-        playerMaxHealthUpdateEventComponent.newMaxHealth = _sceneData.playerData.startHp;
+        playerMaxHealthUpdateEventComponent.newMaxHealthPoints = _sceneData.playerData.startHp;
         ref PlayerHealthUpdateEventComponent playerHealthUpdateEventComponent = ref playerEntity.Get<PlayerHealthUpdateEventComponent>();
-        playerHealthUpdateEventComponent.newHealth = _sceneData.playerData.startHp;
+        playerHealthUpdateEventComponent.newHealthPoints = _sceneData.playerData.startHp;
 
         ref PlayerManaShieldComponent playerManaShieldComponent = ref playerEntity.Get<PlayerManaShieldComponent>();
         playerManaShieldComponent.currentManaShield = _sceneData.playerData.startManaShield;
@@ -58,10 +58,21 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref PlayerManaShieldUpdateEventComponent playerManaShieldUpdateEventComponent = ref playerEntity.Get<PlayerManaShieldUpdateEventComponent>();
         playerManaShieldUpdateEventComponent.newManaShield = _sceneData.playerData.startManaShield;
 
+        ref CurrentPlayerCharacteristicsComponent currentPlayerStats = ref playerEntity.Get<CurrentPlayerCharacteristicsComponent>();
+        currentPlayerStats.healthPoint = playerHealthComponent.currentHealthPoints;
+        currentPlayerStats.maxHealthPoint = playerHealthComponent.maxHealthPoints;
+        currentPlayerStats.manaShield = playerManaShieldComponent.currentManaShield;
+        currentPlayerStats.maxManaShield = playerManaShieldComponent.maxManaShield;
+        currentPlayerStats.playerSpeed = _playerMoveComponent.speed;
+        currentPlayerStats.armor = _sceneData.playerData.startArmor;
+        currentPlayerStats.healthPointRegen = _sceneData.playerData.startHpRegen;
+        currentPlayerStats.manaShieldRegen = _sceneData.playerData.startManaShieldRegen;
+        currentPlayerStats.timeToStartHpRegenAfterTakeDamage = _sceneData.playerData.timeToStartHpRegenAfterTakeDamage;
+        currentPlayerStats.timeToStartManaShieldRegenAfterTakeDamage = _sceneData.playerData.timeToStartManaShieldRegenAfterTakeDamage;
 
-        //_sceneData.playerStats.hp.text = _sceneData.playerData.startHp.ToString();
-        //_sceneData.playerStats.manaShield.text = _sceneData.playerData.startManaShield.ToString();
-        _sceneData.playerStats.armor.text = _sceneData.playerData.startArmor.ToString();
+    //_sceneData.playerStats.hp.text = _sceneData.playerData.startHp.ToString();
+    //_sceneData.playerStats.manaShield.text = _sceneData.playerData.startManaShield.ToString();
+    _sceneData.playerStats.armor.text = _sceneData.playerData.startArmor.ToString();
         _sceneData.playerStats.hpRegen.text = _sceneData.playerData.startHpRegen.ToString();
         _sceneData.playerStats.manaShieldRegen.text = _sceneData.playerData.startManaShieldRegen.ToString();
 
