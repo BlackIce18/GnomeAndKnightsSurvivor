@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerData : ScriptableObject
 {
     public int startHp;
-    public float playerSpeed;
+    public float startSpeed;
     public int startManaShield;
     public int startArmor;
     public int startHpRegen;

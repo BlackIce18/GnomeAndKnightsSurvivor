@@ -63,7 +63,7 @@ public class MeleeEnemySpawnerSystem : IEnemySpawner
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();
         enemyCollider.entity = enemyEnitity;
         _followComponent.target = _sceneData.player;
-        _movableComponent.speed = enemyData.speed + Random.Range(-0.25f, 0.25f);
+        _movableComponent.speed = enemyData.speed;
         _defenceComponent.hp = enemyData.defenceComponent.hp;
 
         _enemyComponent.parentPool = _meleeAttackersPool;

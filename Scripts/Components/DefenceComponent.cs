@@ -1,21 +1,17 @@
 using System;
 
-public enum ArmorType
-{
-    NoArmor,
-    Light,
-    Normal,
-    Heavy,
-    Siege,
-    Heroic
-}
+
 [Serializable]
 public struct DefenceComponent
 {
     public int hp;
-    public int armor;
+    public int maxHP;
     public int manaShield;
-    public float hpRegen;
-    public float manaShieldRegen;
-    public ArmorType armorType;
+    public int maxManaShield;
+    public int armor;
+    public int hpRegen;
+    public int manaShieldRegen;
+    public float timeToStartHpRegenAfterTakeDamage;
+    public float timeToStartManaShieldRegenAfterTakeDamage;
+    public ArmorTypeEnum armorType;
 }

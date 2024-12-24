@@ -13,8 +13,10 @@ public class SceneData : MonoBehaviour
     public Camera mainCamera;
     public EnemySpawnPatterns enemySpawnPatterns;
 
+    public AttackTypeData clearTypeAttackData;
     public AttackTypeData normalTypeAttackData;
     public AttackTypeData piercingTypeAttackData;
+    public AttackTypeData magicTypeAttackData;
 
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI moneyIncomeText;

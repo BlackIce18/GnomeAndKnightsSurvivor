@@ -1,11 +1,10 @@
 using Leopotam.Ecs;
 
-public class HealthBarSystem : IEcsInitSystem, IEcsRunSystem
+public class HpBarSystem : IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
-    private EcsFilter<PlayerHealthComponent> _playerHealthFilter;
-    private EcsFilter<PlayerHealthComponent, PlayerHealthUpdateEventComponent> _playerHealthUpdateEventFilter;
-    private EcsFilter<PlayerHealthComponent, PlayerMaxHealthUpdateEventComponent> _playerMaxHealthUpdateEventFilter;
+    private EcsFilter<DefenceComponent, PlayerHealthUpdateEventComponent> _playerHealthUpdateEventFilter;
+    private EcsFilter<DefenceComponent, PlayerMaxHealthUpdateEventComponent> _playerMaxHealthUpdateEventFilter;
 
     public void Init()
     {
@@ -27,9 +26,9 @@ public class HealthBarSystem : IEcsInitSystem, IEcsRunSystem
             ref var playerHealthComponent = ref _playerHealthUpdateEventFilter.Get1(index);
             ref var PlayerHealthUpdateEventComponent = ref _playerHealthUpdateEventFilter.Get2(index);
 
-            playerHealthComponent.currentHealthPoints = PlayerHealthUpdateEventComponent.newHealthPoints;
-            _sceneData.healthBar.Slider.value = playerHealthComponent.currentHealthPoints;
-            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealthPoints + "/" + playerHealthComponent.maxHealthPoints;
+            playerHealthComponent.hp = PlayerHealthUpdateEventComponent.newHealthPoints;
+            _sceneData.healthBar.Slider.value = playerHealthComponent.hp;
+            _sceneData.healthBar.Text.text = playerHealthComponent.hp + "/" + playerHealthComponent.maxHP;
             entity.Del<PlayerHealthUpdateEventComponent>();
         }
     }
@@ -41,9 +40,9 @@ public class HealthBarSystem : IEcsInitSystem, IEcsRunSystem
             ref var playerHealthComponent = ref _playerMaxHealthUpdateEventFilter.Get1(index);
             ref var playerMaxHealthUpdateEventComponent = ref _playerMaxHealthUpdateEventFilter.Get2(index);
 
-            playerHealthComponent.maxHealthPoints = playerMaxHealthUpdateEventComponent.newMaxHealthPoints;
-            _sceneData.healthBar.Slider.maxValue = playerHealthComponent.maxHealthPoints;
-            _sceneData.healthBar.Text.text = playerHealthComponent.currentHealthPoints + "/" + playerHealthComponent.maxHealthPoints;
+            playerHealthComponent.maxHP = playerMaxHealthUpdateEventComponent.newMaxHealthPoints;
+            _sceneData.healthBar.Slider.maxValue = playerHealthComponent.maxHP;
+            _sceneData.healthBar.Text.text = playerHealthComponent.hp + "/" + playerHealthComponent.maxHP;
             entity.Del<PlayerMaxHealthUpdateEventComponent>();
         }
     }

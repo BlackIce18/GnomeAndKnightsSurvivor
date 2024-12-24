@@ -4,8 +4,8 @@ public class HpRegenSystem : IEcsRunSystem
 {
     private float _elapsedTimeToStartRegen = 0;
     private float _elapsedTimeToRegen = 0;
-    private EcsFilter<PlayerHealthComponent, CurrentPlayerCharacteristicsComponent> _playerCharacteristicsFilter;
-    private EcsFilter<PlayerHealthComponent, TakeDamageEventComponent> _playerHealthFilter;
+    private EcsFilter<DefenceComponent> _defenceFilter;
+    private EcsFilter<DefenceComponent, TakeDamageEventComponent> _defenceTakeDamageFilter;
 
     private bool _canRegen = true;
 
@@ -20,35 +20,34 @@ public class HpRegenSystem : IEcsRunSystem
             _playerCharacteristicsFilterEntity.Get<PlayerHealthComponent>();
             _test = false;
         }*/
-        foreach (var i in  _playerHealthFilter)
+        foreach (var i in  _defenceTakeDamageFilter)
         {
             _elapsedTimeToStartRegen = 0;
             _canRegen = false;
             break;
         }
 
-        foreach (var i in _playerCharacteristicsFilter)
+        foreach (var i in _defenceFilter)
         {
-            ref var playerHp = ref _playerCharacteristicsFilter.Get1(i);
-            ref var playerCharacteristics = ref _playerCharacteristicsFilter.Get2(i);
-            ref var entity = ref _playerCharacteristicsFilter.GetEntity(i);
+            ref var defenceComponent = ref _defenceFilter.Get1(i);
+            ref var entity = ref _defenceFilter.GetEntity(i);
 
-            if (playerHp.currentHealthPoints < playerHp.maxHealthPoints)
+            if (defenceComponent.hp < defenceComponent.maxHP)
             {
-                if ((_elapsedTimeToStartRegen += Time.deltaTime) >= playerCharacteristics.timeToStartHpRegenAfterTakeDamage)
+                if ((_elapsedTimeToStartRegen += Time.deltaTime) >= defenceComponent.timeToStartHpRegenAfterTakeDamage)
                 {
                     _canRegen = true;
                 }
                 if (_canRegen && ((_elapsedTimeToRegen += Time.deltaTime) >= 1))
                 {
-                    playerHp.currentHealthPoints += playerCharacteristics.healthPointRegen;
-                    entity.Get<PlayerHealthUpdateEventComponent>().newHealthPoints = playerHp.currentHealthPoints;
+                    defenceComponent.hp += defenceComponent.hpRegen;
+                    entity.Get<PlayerHealthUpdateEventComponent>().newHealthPoints = defenceComponent.hp;
 
                     _elapsedTimeToRegen = 0;
                 }
             }
 
-            if (playerHp.currentHealthPoints == playerHp.maxHealthPoints)
+            if (defenceComponent.hp == defenceComponent.maxHP)
             {
                 _canRegen = false;
                 _elapsedTimeToStartRegen = 0;

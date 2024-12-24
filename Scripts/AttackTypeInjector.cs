@@ -22,7 +22,7 @@ public class AttackTypeInjector
                 attackType = new PiercingAttack(attackTypeData);
                 break;
             default:
-                attackType = new NormalAttack(attackTypeData);
+                attackType = new ClearAttack(attackTypeData);
                 break;
         }
 
