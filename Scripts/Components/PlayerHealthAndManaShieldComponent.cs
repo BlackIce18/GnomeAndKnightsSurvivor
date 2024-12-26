@@ -1,17 +1,32 @@
-public struct PlayerHealthUpdateEventComponent
+using Leopotam.Ecs;
+
+public struct HPRegenComponent
 {
-    public int newHealthPoints;
+    public bool canRegen;
+    public float elapsedTimeToStartRegen;
+    public float elapsedTimeToRegen;
 }
-public struct PlayerMaxHealthUpdateEventComponent
+public struct ManaShieldRegenComponent
 {
-    public int newMaxHealthPoints;
+    public bool canRegen;
+    public float elapsedTimeToStartRegen;
+    public float elapsedTimeToRegen;
+}
+public struct PlayerHPManaShieldUpdateEventComponent : IEcsIgnoreInFilter { }
+public struct HpUpdateEventComponent
+{
+    public float newHealthPoints;
+}
+public struct MaxHpUpdateEventComponent
+{
+    public float newMaxHealthPoints;
 }
 
-public struct PlayerManaShieldUpdateEventComponent
+public struct ManaShieldUpdateEventComponent
 {
-    public int newManaShield;
+    public float newManaShield;
 }
-public struct PlayerMaxManaShieldUpdateEventComponent
+public struct MaxManaShieldUpdateEventComponent
 {
-    public int newMaxManaShield;
+    public float newMaxManaShield;
 }

@@ -1,10 +1,11 @@
 using Leopotam.Ecs;
+using System;
 
 public class HpBarSystem : IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
-    private EcsFilter<DefenceComponent, PlayerHealthUpdateEventComponent> _playerHealthUpdateEventFilter;
-    private EcsFilter<DefenceComponent, PlayerMaxHealthUpdateEventComponent> _playerMaxHealthUpdateEventFilter;
+    private EcsFilter<DefenceComponent, HpUpdateEventComponent, PlayerHPManaShieldUpdateEventComponent> _playerHealthUpdateEventFilter;
+    private EcsFilter<DefenceComponent, MaxHpUpdateEventComponent, PlayerHPManaShieldUpdateEventComponent> _playerMaxHealthUpdateEventFilter;
 
     public void Init()
     {
@@ -28,8 +29,8 @@ public class HpBarSystem : IEcsInitSystem, IEcsRunSystem
 
             playerHealthComponent.hp = PlayerHealthUpdateEventComponent.newHealthPoints;
             _sceneData.healthBar.Slider.value = playerHealthComponent.hp;
-            _sceneData.healthBar.Text.text = playerHealthComponent.hp + "/" + playerHealthComponent.maxHP;
-            entity.Del<PlayerHealthUpdateEventComponent>();
+            _sceneData.healthBar.Text.text = MathF.Round(playerHealthComponent.hp) + "/" + MathF.Round(playerHealthComponent.maxHP);
+            entity.Del<HpUpdateEventComponent>();
         }
     }
     private void UpdateMaxHealth()
@@ -42,8 +43,8 @@ public class HpBarSystem : IEcsInitSystem, IEcsRunSystem
 
             playerHealthComponent.maxHP = playerMaxHealthUpdateEventComponent.newMaxHealthPoints;
             _sceneData.healthBar.Slider.maxValue = playerHealthComponent.maxHP;
-            _sceneData.healthBar.Text.text = playerHealthComponent.hp + "/" + playerHealthComponent.maxHP;
-            entity.Del<PlayerMaxHealthUpdateEventComponent>();
+            _sceneData.healthBar.Text.text = MathF.Round(playerHealthComponent.hp) + "/" + MathF.Round(playerHealthComponent.maxHP);
+            entity.Del<MaxHpUpdateEventComponent>();
         }
     }
 }

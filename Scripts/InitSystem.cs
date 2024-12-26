@@ -43,16 +43,20 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
         ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
         ref DefenceComponent playerDefenceComponent = ref playerEntity.Get<DefenceComponent>();
+        ref HPRegenComponent hpRegenComponent = ref playerEntity.Get<HPRegenComponent>();
+        ref ManaShieldRegenComponent manaShieldRegenComponent = ref playerEntity.Get<ManaShieldRegenComponent>();
 
+        playerEntity.Get<ManaShieldRegenComponent>();
+        playerEntity.Get<PlayerHPManaShieldUpdateEventComponent>();
 
-        ref PlayerMaxHealthUpdateEventComponent playerMaxHealthUpdateEventComponent = ref playerEntity.Get<PlayerMaxHealthUpdateEventComponent>();
+        ref MaxHpUpdateEventComponent playerMaxHealthUpdateEventComponent = ref playerEntity.Get<MaxHpUpdateEventComponent>();
         playerMaxHealthUpdateEventComponent.newMaxHealthPoints = _sceneData.playerData.startHp;
-        ref PlayerHealthUpdateEventComponent playerHealthUpdateEventComponent = ref playerEntity.Get<PlayerHealthUpdateEventComponent>();
+        ref HpUpdateEventComponent playerHealthUpdateEventComponent = ref playerEntity.Get<HpUpdateEventComponent>();
         playerHealthUpdateEventComponent.newHealthPoints = _sceneData.playerData.startHp;
 
-        ref PlayerMaxManaShieldUpdateEventComponent playerMaxManaShieldUpdateEventComponent = ref playerEntity.Get<PlayerMaxManaShieldUpdateEventComponent>();
+        ref MaxManaShieldUpdateEventComponent playerMaxManaShieldUpdateEventComponent = ref playerEntity.Get<MaxManaShieldUpdateEventComponent>();
         playerMaxManaShieldUpdateEventComponent.newMaxManaShield = _sceneData.playerData.startManaShield;
-        ref PlayerManaShieldUpdateEventComponent playerManaShieldUpdateEventComponent = ref playerEntity.Get<PlayerManaShieldUpdateEventComponent>();
+        ref ManaShieldUpdateEventComponent playerManaShieldUpdateEventComponent = ref playerEntity.Get<ManaShieldUpdateEventComponent>();
         playerManaShieldUpdateEventComponent.newManaShield = _sceneData.playerData.startManaShield;
 
         ref DefenceComponent currentPlayerStats = ref playerEntity.Get<DefenceComponent>();

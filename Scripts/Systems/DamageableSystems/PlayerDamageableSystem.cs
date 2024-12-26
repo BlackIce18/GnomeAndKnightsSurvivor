@@ -18,22 +18,22 @@ public class PlayerDamageableSystem : IEcsRunSystem
             {
                 if (damage.attackType is MagicAttack) 
                 {
-                    ref var playerManaShieldUpdateEvent = ref entity.Get<PlayerManaShieldUpdateEventComponent>();
+                    ref var playerManaShieldUpdateEvent = ref entity.Get<ManaShieldUpdateEventComponent>();
                     var difference = defenceComponent.manaShield - damage.damage;
 
                     if (difference > 0)
                     {
-                        playerManaShieldUpdateEvent.newManaShield = difference;
+                        playerManaShieldUpdateEvent.newManaShield = defenceComponent.manaShield = difference;
                     }
                     else if (difference < 0)
                     {
-                        playerManaShieldUpdateEvent.newManaShield = 0;
+                        playerManaShieldUpdateEvent.newManaShield = defenceComponent.manaShield = 0;
                         difference = Math.Abs(difference);
-                        resultDamage = difference;
+                        resultDamage = defenceComponent.hp -= difference;
                     }
                 }
             }
-            ref var playerHealthUpdateEvent = ref entity.Get<PlayerHealthUpdateEventComponent>();
+            ref var playerHealthUpdateEvent = ref entity.Get<HpUpdateEventComponent>();
             playerHealthUpdateEvent.newHealthPoints = resultDamage;
 
             entity.Del<TakeDamageEventComponent>();

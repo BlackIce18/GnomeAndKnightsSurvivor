@@ -11,8 +11,8 @@ public struct EnemyAttackComponent
 {
     public AttackType AttackType;
     public AttackRange AttackRange;
-    public int damage;
-    public int range;
+    public float damage;
+    public float range;
     public float attackRate;
     public float critChance;
     public float critDamagePercantage;

@@ -1,10 +1,11 @@
 using Leopotam.Ecs;
+using System;
 
 public class ManaShieldBarSystem : IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
-    private EcsFilter<DefenceComponent, PlayerManaShieldUpdateEventComponent> _playerManaShieldUpdateEventFilter;
-    private EcsFilter<DefenceComponent, PlayerMaxManaShieldUpdateEventComponent> _playerMaxManaShieldUpdateEventFilter;
+    private EcsFilter<DefenceComponent, ManaShieldUpdateEventComponent, PlayerHPManaShieldUpdateEventComponent> _playerManaShieldUpdateEventFilter;
+    private EcsFilter<DefenceComponent, MaxManaShieldUpdateEventComponent, PlayerHPManaShieldUpdateEventComponent> _playerMaxManaShieldUpdateEventFilter;
 
     public void Init()
     {
@@ -28,8 +29,8 @@ public class ManaShieldBarSystem : IEcsInitSystem, IEcsRunSystem
 
             defenceComponent.manaShield = PlayerManaShieldUpdateEventComponent.newManaShield;
             _sceneData.manaShieldBar.Slider.value = defenceComponent.manaShield;
-            _sceneData.manaShieldBar.Text.text = defenceComponent.manaShield + "/" + defenceComponent.maxManaShield;
-            entity.Del<PlayerManaShieldUpdateEventComponent>();
+            _sceneData.manaShieldBar.Text.text = MathF.Round(defenceComponent.manaShield) + "/" + MathF.Round(defenceComponent.maxManaShield);
+            entity.Del<ManaShieldUpdateEventComponent>();
         }
     }
     private void UpdateMaxManaShield()
@@ -42,8 +43,8 @@ public class ManaShieldBarSystem : IEcsInitSystem, IEcsRunSystem
 
             defenceComponent.maxManaShield = playerMaxManaShieldUpdateEventComponent.newMaxManaShield;
             _sceneData.manaShieldBar.Slider.maxValue = defenceComponent.maxManaShield;
-            _sceneData.manaShieldBar.Text.text = defenceComponent.manaShield + "/" + defenceComponent.maxManaShield;
-            entity.Del<PlayerMaxManaShieldUpdateEventComponent>();
+            _sceneData.manaShieldBar.Text.text = MathF.Round(defenceComponent.manaShield) + "/" + MathF.Round(defenceComponent.maxManaShield);
+            entity.Del<MaxManaShieldUpdateEventComponent>();
         }
     }
 }
