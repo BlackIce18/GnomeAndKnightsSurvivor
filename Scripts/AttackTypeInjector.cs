@@ -21,6 +21,9 @@ public class AttackTypeInjector
             case AttackTypeEnum.Piercing:
                 attackType = new PiercingAttack(attackTypeData);
                 break;
+            case AttackTypeEnum.Magic:
+                attackType = new MagicAttack(attackTypeData);
+                break;
             default:
                 attackType = new ClearAttack(attackTypeData);
                 break;

@@ -20,11 +20,16 @@ public class ResetShopCommand : ICommand
     {
         ref var _activeShopItemsComponent = ref _shopEntity.Get<ActiveShopItemsComponent>();
         ref ActiveShopItemsUpdateEventComponent activeShopItemsUpdateEventComponent = ref _shopEntity.Get<ActiveShopItemsUpdateEventComponent>();
+        ref ShopBuyItemCommandComponent shopItems = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
+        
+
         activeShopItemsUpdateEventComponent.shopItems = _activeShopItemsComponent.shopItems;
 
         foreach (ShopUIButton shopUIButton in _sceneData.shop.ShopButtons) 
         {
             shopUIButton.Button.interactable = true;
+            shopUIButton.Border.gameObject.SetActive(true);
+            shopUIButton.Border.gameObject.SetActive(true);
         }
     }
     private void UpdateWallet(ref WalletComponent walletComponent, int price)

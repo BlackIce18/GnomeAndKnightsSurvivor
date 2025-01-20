@@ -37,11 +37,12 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
     public void Init()
     {
         EcsEntity playerEntity = _world.NewEntity();
-        ref MovableComponent _playerMoveComponent = ref playerEntity.Get<MovableComponent>();
-        _playerMoveComponent.speed = _sceneData.playerData.startSpeed;
-        _playerMoveComponent.transform = _sceneData.player;
-        ref UserInputComponent _userInputComponent = ref playerEntity.Get<UserInputComponent>();
-        ref OnTriggerEnterComponent _hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
+        ref MovableComponent playerMoveComponent = ref playerEntity.Get<MovableComponent>();
+        playerMoveComponent.speed = _sceneData.playerData.startSpeed;
+        playerMoveComponent.transform = _sceneData.player;
+        ref UserInputComponent userInputComponent = ref playerEntity.Get<UserInputComponent>();
+        ref OnTriggerEnterComponent hitComponent = ref playerEntity.Get<OnTriggerEnterComponent>();
+
         ref DefenceComponent playerDefenceComponent = ref playerEntity.Get<DefenceComponent>();
         ref HPRegenComponent hpRegenComponent = ref playerEntity.Get<HPRegenComponent>();
         ref ManaShieldRegenComponent manaShieldRegenComponent = ref playerEntity.Get<ManaShieldRegenComponent>();
@@ -89,7 +90,15 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         _enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
 
         EcsEntity damageTextEntity = _world.NewEntity();
-        ref ActiveDamageText activeDamageText = ref damageTextEntity.Get<ActiveDamageText>();
+        ref AllActiveDamageTextComponent activeDamageText = ref damageTextEntity.Get<AllActiveDamageTextComponent>();
         activeDamageText.damageTexts = new List<DamageTextRemoveTimeStruct>();
+    
+        EcsEntity lvlEntity = _world.NewEntity();
+        ref var lvlComponent = ref lvlEntity.Get<LvlComponent>();
+        lvlComponent.current = 1;
+        ref var xpComponent = ref lvlEntity.Get<XpComponent>();
+        _sceneData.xpSlider.value = xpComponent.current = 0;
+        _sceneData.xpSlider.maxValue = xpComponent.max = _sceneData.lvlAndXpData.xpToReachLevel[lvlComponent.current];
+
     }
 }

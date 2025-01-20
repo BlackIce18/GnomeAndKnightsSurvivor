@@ -26,7 +26,6 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new FireballAttackSystem());
         _systems.Add(new BulletMoverSystem());
         _systems.Add(new FollowSystem());
-        _systems.Add(new DamageTextSystem());
         _systems.Add(new PlayerDamageableSystem());
         _systems.Add(new EnemyDamageableSystem());
         _systems.Add(new LifeTimeBulletsSystem());
@@ -36,6 +35,9 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new ResetShopSystem());
         _systems.Add(new BorderColorsSystem());
         _systems.Add(new ManaShieldRegenSystem());
+        _systems.Add(new DamageTextSystem());
+        _systems.Add(new XpSystem());
+        _systems.Add(new LvlSystem());
         _systems.Add(new HpBarSystem());
         _systems.Add(new ManaShieldBarSystem());
         _systems.Add(new WalletUpdateUISystem());

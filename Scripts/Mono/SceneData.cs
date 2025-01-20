@@ -10,9 +10,11 @@ public class SceneData : MonoBehaviour
     public SpawnTimingsData spawnTimings;
     public TextMeshProUGUI timerText;
     public Slider timerSlider;
+    public Slider xpSlider;
     public Camera mainCamera;
     public EnemySpawnPatterns enemySpawnPatterns;
 
+    public LvlAndXpData lvlAndXpData;
     public AttackTypeData clearTypeAttackData;
     public AttackTypeData normalTypeAttackData;
     public AttackTypeData piercingTypeAttackData;

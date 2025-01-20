@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public struct DamageTextStruct
+public struct DamageTextComponent
 {
     public string text;
+    public EcsEntity entity;
     public Vector3 position;
 }
 public struct DamageTextRemoveTimeStruct : IEcsIgnoreInFilter 
@@ -16,7 +17,7 @@ public struct DamageTextRemoveTimeStruct : IEcsIgnoreInFilter
     public float startTime;
     public float endTime;
 }
-public struct ActiveDamageText
+public struct AllActiveDamageTextComponent
 {
     public List<DamageTextRemoveTimeStruct> damageTexts;
 }
@@ -25,9 +26,11 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
     private SceneData _sceneData;
     private EcsWorld _world;
     private EcsFilter<OnTriggerEnterComponent, DefenceComponent> _filter = null;
-    private EcsFilter<DamageTextStruct, DamageTextRemoveTimeStruct> _removeTextFilter = null;
-    private EcsFilter<ActiveDamageText> _activeDamageTextFilter = null;
-    private ActiveDamageText _activeDamageText;
+    private EcsFilter<DamageTextComponent, DamageTextRemoveTimeStruct> _removeTextFilter = null;
+    private EcsFilter<AllActiveDamageTextComponent> _activeDamageTextFilter = null;
+    private AllActiveDamageTextComponent _activeDamageText;
+
+    private EcsFilter<DamageTextComponent> _damageTextFilter = null;
     public void Init()
     {
         _activeDamageText = _activeDamageTextFilter.Get1(0);
@@ -35,6 +38,34 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
 
     public void Run()
     {
+
+        foreach (var i in _damageTextFilter)
+        {
+            ref var damageTextComponent = ref _damageTextFilter.Get1(i);
+            ref var entity = ref damageTextComponent.entity;
+            
+
+            ref var damageTextRemoveTime = ref entity.Get<DamageTextRemoveTimeStruct>();
+            if (damageTextRemoveTime.textObject == null)
+            {
+                damageTextRemoveTime.entity = entity;
+                damageTextRemoveTime.textObject = GameObject.Instantiate(_sceneData.damageTextPrefab, _sceneData.damageTextParent.transform);
+                damageTextRemoveTime.startTime = Time.time;
+                DamageText damageText = damageTextRemoveTime.textObject.GetComponent<DamageText>();
+                damageTextRemoveTime.endTime = Time.time + damageText.AnimationClipDuration;
+
+
+                damageText.Text.text = damageTextComponent.text;
+                damageText.transform.position = damageTextComponent.position;
+                damageTextRemoveTime.textObject.transform.position = new Vector3(damageTextComponent.position.x, damageTextRemoveTime.textObject.transform.position.y, damageTextComponent.position.z);
+                damageText.PlayAnimation();
+                _activeDamageText.damageTexts.Add(damageTextRemoveTime);
+            }
+        }
+
+
+
+        
         foreach (var i in _filter)
         {
             ref var OnTriggerEnterComponent = ref _filter.Get1(i);
@@ -47,25 +78,6 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
                 {
                     Bullet bullet = OnTriggerEnterComponent.other.GetComponent<Bullet>();
                     BulletComponent bulletComponent = bullet.entity.Get<BulletComponent>();
-
-                    var textEntity = _world.NewEntity();
-                    GameObject instance = GameObject.Instantiate(_sceneData.damageTextPrefab, _sceneData.damageTextParent.transform);
-                    DamageText damageText = instance.GetComponent<DamageText>();
-                    damageText.Text.text = bulletComponent.damage.ToString();
-
-                    ref var damageTextRemoveTime = ref textEntity.Get<DamageTextRemoveTimeStruct>();
-                    damageTextRemoveTime.entity = textEntity;
-                    damageTextRemoveTime.textObject = instance;
-                    damageTextRemoveTime.startTime = Time.time;
-                    damageTextRemoveTime.endTime = Time.time + damageText.AnimationClipDuration;
-
-                    ref var damageTextStruct = ref textEntity.Get<DamageTextStruct>();
-                    damageTextStruct.text = bulletComponent.damage.ToString();
-                    damageTextStruct.position = OnTriggerEnterComponent.first.gameObject.transform.position;
-                    instance.transform.position = new Vector3(damageTextStruct.position.x, instance.transform.position.y, damageTextStruct.position.z);
-                    damageText.PlayAnimation();
-                    _activeDamageText.damageTexts.Add(damageTextRemoveTime);
-                    
                 }
             }
         }
@@ -75,7 +87,7 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
             if (Time.time >= _activeDamageText.damageTexts[i].endTime)
             {
                 GameObject.Destroy(_activeDamageText.damageTexts[i].textObject);
-                _activeDamageText.damageTexts[i].entity.Del<DamageTextStruct>();
+                _activeDamageText.damageTexts[i].entity.Del<DamageTextComponent>();
                 _activeDamageText.damageTexts[i].entity.Del<DamageTextRemoveTimeStruct>();
                 _activeDamageText.damageTexts.RemoveAt(i);
             }

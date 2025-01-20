@@ -20,8 +20,16 @@ public class EnemyDamageableSystem : IEcsRunSystem
                 {
                     Bullet bullet = OnTriggerEnterComponent.other.GetComponent<Bullet>();
                     BulletComponent bulletComponent = bullet.entity.Get<BulletComponent>();
-                    defenceComponent.hp -= bulletComponent.attackType.CalculateDamage(defenceComponent, bulletComponent.damage);
 
+                    float damage = bulletComponent.attackType.CalculateDamage(defenceComponent, bulletComponent.damage);
+                    defenceComponent.hp -= damage;
+
+                    Debug.Log("Create");
+                    var textEntity = _world.NewEntity();
+                    ref var damageTextComponent = ref textEntity.Get<DamageTextComponent>();
+                    damageTextComponent.text = damage.ToString();
+                    damageTextComponent.entity = textEntity;
+                    damageTextComponent.position = bullet.transform.position;
 
                     bullet.AfterCollide();
                 }

@@ -9,12 +9,13 @@ public class RemoveEnemySystem : IEcsInitSystem, IEcsRunSystem
     private EcsFilter<DefenceComponent, EnemyComponent, OnTriggerEnterComponent> _filter = null;
     private EcsFilter<EnemiesPoolComponent> _enemiesPool = null;
     private EcsFilter<OnTriggerEnterComponent> _onTriggerEnter = null;
-    private EcsFilter<WalletComponent> _walletComponent = null;
+    private EcsFilter<WalletComponent> _walletFilter = null;
     private EcsEntity _walletEntity;
+    private EcsFilter<LvlComponent, XpComponent> _lvlFilter = null;
 
     public void Init()
     {
-        _walletEntity = _walletComponent.GetEntity(0);
+        _walletEntity = _walletFilter.GetEntity(0);
     }
 
     public void Run()
@@ -28,6 +29,12 @@ public class RemoveEnemySystem : IEcsInitSystem, IEcsRunSystem
             {
                 enemyComponent.instance.SetActive(false);
                 enemyComponent.parentPool.AddToPool(enemyComponent);
+
+                foreach(var index in _lvlFilter)
+                {
+                    ref var lvlEntity = ref _lvlFilter.GetEntity(index);
+                    lvlEntity.Get<XpUpdateComponent>().xp = enemyComponent.enemyData.Xp;
+                }
 
                 _walletEntity.Get<KillBountyEventComponent>().killBounty = enemyComponent.enemyData.goldForKill;
             }

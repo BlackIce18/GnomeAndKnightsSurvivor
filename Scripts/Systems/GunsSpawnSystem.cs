@@ -1,4 +1,5 @@
 using Leopotam.Ecs;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
@@ -6,13 +7,11 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
     private EcsWorld _world;
     private ActiveGuns _activeGuns;
 
-    private AttackTypeInjector _attackTypeInjector;
     private EcsFilter<PurchasedItemsComponent> _purchasedItemsFilter;
     private EcsFilter<ShopBuyItemEventComponent> _shopBuyItemFilter;
+    private EcsFilter<ActiveGunComponent> _activeGunComponentFilter;
     public void Init()
     {
-        _attackTypeInjector = new AttackTypeInjector(this);
-
         SpawnNewGun();
     }
 
@@ -26,65 +25,48 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
 
             if(shopBuyEvent.item is ShopItemGunData gunData)
             {
-                bool isExist = false;
-                for (int i = 0; i < _activeGuns.GunList.Count; i++)
+                if (AddGunIfGunExist(shopBuyEvent) == false)
                 {
-                    if (_activeGuns.GunList[i].gun.GunAndBulletData.gunData.shopItemData == shopBuyEvent.item)
-                    {
-                        ActiveGunComponent activeGunComponent = _activeGuns.guns[i];
-                        activeGunComponent.count++;
-                        _activeGuns.guns[i] = activeGunComponent;
-                        isExist = true;
-                        break;
-                    }
-                }
-
-                if (isExist == false)
-                {
-                    ActiveGunComponent activeGunComponent = new ActiveGunComponent();
-                    GameObject gunGameObject = GameObject.Instantiate(gunData.datas.gunData.gunPrefab, _activeGuns.transform);
-                    activeGunComponent.gun = gunGameObject.GetComponent<Gun>();
-                    activeGunComponent.gun.attackInterval = gunData.datas.gunData.attackInterval;
-                    activeGunComponent.count++;
-                    //activeGunComponent.gun.GunAndBulletData.gunData = purchasedItems.items[j].datas.gunData;
-
-                    activeGunComponent.bulletPoolSizeForOneGun = 10;
-                    int elementsCount = activeGunComponent.bulletPoolSizeForOneGun * activeGunComponent.count;
-                    activeGunComponent.bulletPool = new ObjectPool<BulletComponent>(elementsCount);
-
-                    for (int q = 0; q < elementsCount; q++)
-                    {
-                        BulletComponent bulletComponent = CreateNewBullet(activeGunComponent);
-                        activeGunComponent.bulletPool.AddToPool(bulletComponent);
-                    }
-
-                    purchasedItemsList.items.Add(shopBuyEvent.item);
-                    _activeGuns.GunList.Add(activeGunComponent);
+                    InitNewGun(gunData, purchasedItemsList, shopBuyEvent);
                 }
 
                 entity.Del<ShopBuyItemEventComponent>();
             }
         }
     }
-
     public void SpawnNewGun()
     {
-        for (int i = 0; i < _activeGuns.GunList.Count; i++)
+        foreach(var i in _activeGunComponentFilter)
         {
-            ActiveGunComponent activeGunComponent = _activeGuns.GunList[i];
-            activeGunComponent.gun.attackInterval = activeGunComponent.gun.GunAndBulletData.gunData.attackInterval;
+            ref var activeGun = ref _activeGunComponentFilter.Get1(i);
+            activeGun.gun.attackInterval = activeGun.gun.GunAndBulletData.gunData.attackInterval;
 
-            int elementsCount = activeGunComponent.bulletPoolSizeForOneGun * activeGunComponent.count;
-            activeGunComponent.bulletPool = new ObjectPool<BulletComponent>(elementsCount);
+            int elementsCount = activeGun.bulletPoolSizeForOneGun;
+            activeGun.bulletPool = new ObjectPool<BulletComponent>(elementsCount);
 
             for (int j = 0; j < elementsCount; j++)
             {
-                BulletComponent bulletComponent = CreateNewBullet(activeGunComponent);
-                activeGunComponent.bulletPool.AddToPool(bulletComponent);
+                BulletComponent bulletComponent = CreateNewBullet(activeGun);
+                activeGun.bulletPool.AddToPool(bulletComponent);
             }
-
-            _activeGuns.GunList[i] = activeGunComponent;
         }
+
+        //for (int i = 0; i < _activeGuns.GunList.Count; i++)
+        //{
+        //    ActiveGunItem activeGunComponent = _activeGuns.GunList[i];
+        //    activeGunComponent.gun.attackInterval = activeGunComponent.gun.GunAndBulletData.gunData.attackInterval;
+
+        //    int elementsCount = activeGunComponent.bulletPoolSizeForOneGun * activeGunComponent.count;
+        //    activeGunComponent.bulletPool = new ObjectPool<BulletComponent>(elementsCount);
+
+        //    for (int j = 0; j < elementsCount; j++)
+        //    {
+        //        BulletComponent bulletComponent = CreateNewBullet(activeGunComponent);
+        //        activeGunComponent.bulletPool.AddToPool(bulletComponent);
+        //    }
+
+        //    _activeGuns.GunList[i] = activeGunComponent;
+        //}
     }
     private BulletComponent CreateNewBullet(ActiveGunComponent activeGunComponent)
     {
@@ -99,8 +81,66 @@ public class GunsSpawnSystem : IEcsInitSystem, IEcsRunSystem
         bullet.speed = activeGunComponent.gun.GunAndBulletData.bulletData.speed;
         bullet.size = activeGunComponent.gun.GunAndBulletData.bulletData.size;
 
-        bullet.attackType = _attackTypeInjector.Inject(activeGunComponent.gun.GunAndBulletData.gunData.attackType);
+        bullet.attackType = new AttackTypeInjector(this).Inject(activeGunComponent.gun.GunAndBulletData.gunData.attackType);
 
         return bullet;
+    }
+    private bool AddGunIfGunExist(ShopBuyItemEventComponent shopBuyEvent)
+    {
+        
+        foreach(var i in _activeGunComponentFilter)
+        {
+            ref var activeGun = ref _activeGunComponentFilter.Get1(i);
+            if(activeGun.gun.GunAndBulletData.gunData.shopItemData == shopBuyEvent.item)
+            {
+                ref var entity = ref _activeGunComponentFilter.GetEntity(i);
+                ref var newGun = ref entity.Get<ActiveGunComponent>();
+                newGun.gun = activeGun.gun;
+                newGun.bulletPoolSizeForOneGun = activeGun.bulletPoolSizeForOneGun;
+                newGun.bulletPool = activeGun.bulletPool;
+                newGun.target = activeGun.target;
+
+                return true;
+            }
+        }
+        /*
+        for (int i = 0; i < _activeGuns.GunList.Count; i++)
+        {
+            if (_activeGuns.GunList[i].gun.GunAndBulletData.gunData.shopItemData == shopBuyEvent.item)
+            {
+                ActiveGunItem activeGunComponent = _activeGuns.guns[i];
+                activeGunComponent.count++;
+                _activeGuns.guns[i] = activeGunComponent;
+                return true;
+            }
+        }
+        */
+        
+        return false;
+    }
+
+    private void InitNewGun(ShopItemGunData gunData, PurchasedItemsComponent purchasedItemsList, ShopBuyItemEventComponent shopBuyEvent)
+    {
+        var entity = _world.NewEntity();
+        ref var activeGunComponent = ref entity.Get<ActiveGunComponent>();
+        GameObject gunGameObject = GameObject.Instantiate(gunData.datas.gunData.gunPrefab, _activeGuns.transform);
+        activeGunComponent.gun = gunGameObject.GetComponent<Gun>();
+        activeGunComponent.gun.attackInterval = gunData.datas.gunData.attackInterval;
+        //activeGunComponent.gun.GunAndBulletData.gunData = purchasedItems.items[j].datas.gunData;
+
+        // Выбор пула / создание пула
+        int elementsCount = activeGunComponent.bulletPoolSizeForOneGun = 10;
+        activeGunComponent.bulletPool = new ObjectPool<BulletComponent>(elementsCount);
+
+
+
+        for (int q = 0; q < elementsCount; q++)
+        {
+            BulletComponent bulletComponent = CreateNewBullet(activeGunComponent);
+            activeGunComponent.bulletPool.AddToPool(bulletComponent);
+        }
+
+        purchasedItemsList.items.Add(shopBuyEvent.item);
+        //_activeGuns.GunList.Add(activeGunComponent);
     }
 }

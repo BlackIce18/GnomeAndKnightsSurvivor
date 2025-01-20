@@ -6,7 +6,7 @@ using System.Linq;
 public abstract class AttackType : IAttackType
 {
     protected abstract AttackTypeData AttackTypeData { get; set; }
-    public abstract int CalculateDamage(DefenceComponent defenceComponent, float damage);
+    public abstract float CalculateDamage(DefenceComponent defenceComponent, float damage);
 }
 public class MagicAttack : AttackType, IAttackType
 {
@@ -22,7 +22,7 @@ public class MagicAttack : AttackType, IAttackType
             _damageTable.Add(i.armorType, i.defencePercent);
         }
     }
-    public override int CalculateDamage(DefenceComponent defenceComponent, float damage)
+    public override float CalculateDamage(DefenceComponent defenceComponent, float damage)
     {
         return Convert.ToInt32(damage * _damageTable[defenceComponent.armorType] / 100);
     }
@@ -41,7 +41,7 @@ public class ClearAttack : AttackType, IAttackType
             _damageTable.Add(i.armorType, i.defencePercent);
         }
     }
-    public override int CalculateDamage(DefenceComponent defenceComponent, float damage)
+    public override float CalculateDamage(DefenceComponent defenceComponent, float damage)
     {
         return Convert.ToInt32(damage * _damageTable[defenceComponent.armorType] / 100);
     }
@@ -61,7 +61,7 @@ public class NormalAttack : AttackType, IAttackType
         }
     }
 
-    public override int CalculateDamage(DefenceComponent defenceComponent, float damage)
+    public override float CalculateDamage(DefenceComponent defenceComponent, float damage)
     {
         return Convert.ToInt32(damage * _damageTable[defenceComponent.armorType] / 100);
     }
@@ -81,7 +81,7 @@ public class PiercingAttack : AttackType, IAttackType
         }
     }
 
-    public override int CalculateDamage(DefenceComponent defenceComponent, float damage)
+    public override float CalculateDamage(DefenceComponent defenceComponent, float damage)
     {
         return Convert.ToInt32(damage * _damageTable[defenceComponent.armorType] / 100);
     }

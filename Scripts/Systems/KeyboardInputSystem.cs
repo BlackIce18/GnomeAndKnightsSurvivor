@@ -1,7 +1,6 @@
 using Leopotam.Ecs;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class KeyboardInputSystem : IEcsRunSystem, IEcsInitSystem
 {

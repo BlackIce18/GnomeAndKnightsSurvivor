@@ -28,7 +28,6 @@ public abstract class ShopPurchaseCommand<T> : ICommand where T : ShopItemData
 }
 public class ShopBuyCommand : ShopPurchaseCommand<ShopItemData>, ICommand
 {
-    private bool _canBuy = true;
     public ShopBuyCommand(ShopUIButton shopUIButton, ShopItemData shopGunData, EcsEntity shopEntity, EcsEntity walletEntity)
         : base(shopUIButton, shopGunData, shopEntity, walletEntity)
     {
@@ -36,11 +35,11 @@ public class ShopBuyCommand : ShopPurchaseCommand<ShopItemData>, ICommand
 
     public override void Execute()
     {
-        if (_canBuy)
-        {
-            ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
-            ref ShopBuyItemCommandComponent shopBuyItemComponent = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
+        ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
+        ref ShopBuyItemCommandComponent shopBuyItemComponent = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
             
+        if(_shopUIButton.Button.interactable)
+        {
             if (walletComponent.money < _shopItemData.cost)
             {
                 Debug.Log("Не хватает денег");
@@ -57,15 +56,11 @@ public class ShopBuyCommand : ShopPurchaseCommand<ShopItemData>, ICommand
                 Color color = _shopUIButton.Image.color;
                 color.a = 0f;
                 _shopUIButton.Image.color = color;
-
+                _shopUIButton.Border.gameObject.SetActive(false);
                 
                 _shopEntity.Get<ShopBuyItemEventComponent>().item = _shopItemData;
                 _shopEntity.Get<PurchasedItemsComponent>().items.Add(_shopItemData);
-                _canBuy = false;
-                // !!!!!!!!!!!!!!
-                /*ref PurchasedItemsComponent purchasedItemsComponent = ref _shopEntity.Get<PurchasedItemsComponent>();
-                purchasedItemsComponent.items = new List<ShopItemData>() { _shopItemData };*/
-                // !!!!!!!!!!!!!!
+                shopBuyItemComponent.isAvailable = false;
             }
         }
     }
