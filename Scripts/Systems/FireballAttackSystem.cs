@@ -22,6 +22,7 @@ public class FireballAttackSystem : IEcsRunSystem
             {
                 continue;
             }
+
             float positionY = activeGun.gun.GunAndBulletData.gunData.bulletPrefab.transform.position.y;
             Vector3 bulletStartPosition = new Vector3(characterPosition.transform.position.x, positionY, characterPosition.transform.position.z);
             Vector3 bulletEndPosition = new Vector3(userInput.mousePositionAtTerrain.x, positionY, userInput.mousePositionAtTerrain.z - 1.5f);// -1 из-за смещения по y на 1, -1 за движение по z

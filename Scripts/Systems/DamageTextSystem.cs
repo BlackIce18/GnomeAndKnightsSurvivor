@@ -38,7 +38,6 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
 
     public void Run()
     {
-
         foreach (var i in _damageTextFilter)
         {
             ref var damageTextComponent = ref _damageTextFilter.Get1(i);
@@ -60,25 +59,6 @@ public class DamageTextSystem : IEcsInitSystem, IEcsRunSystem
                 damageTextRemoveTime.textObject.transform.position = new Vector3(damageTextComponent.position.x, damageTextRemoveTime.textObject.transform.position.y, damageTextComponent.position.z);
                 damageText.PlayAnimation();
                 _activeDamageText.damageTexts.Add(damageTextRemoveTime);
-            }
-        }
-
-
-
-        
-        foreach (var i in _filter)
-        {
-            ref var OnTriggerEnterComponent = ref _filter.Get1(i);
-            ref var defenceComponent = ref _filter.Get2(i);
-
-            if ((OnTriggerEnterComponent.first != null) &&
-                (OnTriggerEnterComponent.other != null))
-            {
-                if (OnTriggerEnterComponent.first.CompareTag("Enemy") && OnTriggerEnterComponent.other.CompareTag("Bullet"))
-                {
-                    Bullet bullet = OnTriggerEnterComponent.other.GetComponent<Bullet>();
-                    BulletComponent bulletComponent = bullet.entity.Get<BulletComponent>();
-                }
             }
         }
 

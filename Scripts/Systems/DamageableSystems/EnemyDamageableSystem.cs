@@ -24,7 +24,6 @@ public class EnemyDamageableSystem : IEcsRunSystem
                     float damage = bulletComponent.attackType.CalculateDamage(defenceComponent, bulletComponent.damage);
                     defenceComponent.hp -= damage;
 
-                    Debug.Log("Create");
                     var textEntity = _world.NewEntity();
                     ref var damageTextComponent = ref textEntity.Get<DamageTextComponent>();
                     damageTextComponent.text = damage.ToString();
