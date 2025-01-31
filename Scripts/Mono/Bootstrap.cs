@@ -23,7 +23,7 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new KillBountySystem());
         _systems.Add(new HpRegenSystem());
         _systems.Add(new TimerSystem());
-        _systems.Add(new FireballAttackSystem());
+        _systems.Add(new SingleBulletWeaponSystem());
         _systems.Add(new BulletMoverSystem());
         _systems.Add(new FollowSystem());
         _systems.Add(new PlayerDamageableSystem());
