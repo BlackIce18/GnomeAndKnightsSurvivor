@@ -18,7 +18,6 @@ public class GunsSpawnSystem : IEcsRunSystem
 
             if(shopBuyEvent.item is ShopItemGunData gunData)
             {
-                // Как понять к какому типу оружия отправлять данные об инициализации
                 //InitNewGun(gunData.datas);
                 _weaponFactory.CreateWeapon(gunData.datas.gunData.gunId, entity);
                 purchasedItemsList.items.Add(shopBuyEvent.item);

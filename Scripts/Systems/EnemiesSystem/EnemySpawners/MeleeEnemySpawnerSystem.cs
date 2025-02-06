@@ -71,6 +71,6 @@ public class MeleeEnemySpawnerSystem : IEnemySpawner
         _enemyComponent.instance = enemy;
         _enemyComponent.enemyData = enemyData;
 
-        _meleeAttackersPool.AddToPool(_enemyComponent);
+        //_meleeAttackersPool.AddToPool(_enemyComponent);
     }
 }
