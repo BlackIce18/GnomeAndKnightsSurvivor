@@ -1,13 +1,13 @@
 using Leopotam.Ecs;
 using System.Collections.Generic;
-public struct ActiveShopItemsComponent
+public struct ShopBuyCommandsComponent
 {
-    public List<ShopItemGunData> shopItems;
+    public List<ShopBuyCommand> buyCommands;
 }
 
-public struct ActiveShopItemsUpdateEventComponent
+public struct ShopBuyCommandsUpdateEventComponent
 {
-    public List<ShopItemGunData> shopItems;
+    public List<ShopBuyCommand> buyCommands;
 }
 public struct ShopBuyItemCommandComponent
 {

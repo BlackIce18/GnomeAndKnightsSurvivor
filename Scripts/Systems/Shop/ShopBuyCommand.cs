@@ -32,6 +32,13 @@ public class ShopBuyCommand : ShopPurchaseCommand<ShopItemData>, ICommand
         : base(shopUIButton, shopGunData, shopEntity, walletEntity)
     {
     }
+    public void Update(ShopUIButton shopUIButton, ShopItemData shopItemData, EcsEntity shopEntity, EcsEntity walletEntity)
+    {
+        _shopUIButton = shopUIButton;
+        _shopItemData = shopItemData;
+        _shopEntity = shopEntity;
+        _walletEntity = walletEntity;
+    }
 
     public override void Execute()
     {

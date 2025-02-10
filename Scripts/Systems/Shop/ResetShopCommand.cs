@@ -1,37 +1,80 @@
 using Leopotam.Ecs;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ResetShopCommand : ICommand
 {
     private EcsEntity _walletEntity;
     private EcsEntity _shopEntity;
     private SceneData _sceneData;
+    private EcsEntity _timerEntity;
+    private EcsFilter<ShopBuyItemCommandComponent, ResetShopComponent> _filterShopBuyItemComponent = null;
+    private PurchasedItemsComponent _purchasedItemsComponent;
 
-    public ResetShopCommand(SceneData sceneData,
+    public ResetShopCommand(
+        SceneData sceneData,
         EcsEntity shopEntity,
-        EcsEntity walletEntity)
+        EcsEntity walletEntity,
+        EcsEntity timerEntity,
+        PurchasedItemsComponent purchasedItemsComponent)
     {
         _walletEntity = walletEntity;
         _shopEntity = shopEntity;
         _sceneData = sceneData;
+
+        _timerEntity = timerEntity;
+        _purchasedItemsComponent = purchasedItemsComponent;
     }
-    private void ResetShopItems()
+    public void Execute()
     {
-        ref var _activeShopItemsComponent = ref _shopEntity.Get<ActiveShopItemsComponent>();
-        ref ActiveShopItemsUpdateEventComponent activeShopItemsUpdateEventComponent = ref _shopEntity.Get<ActiveShopItemsUpdateEventComponent>();
-        ref ShopBuyItemCommandComponent shopItems = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
-        
+        ref var resetShopComponent = ref _shopEntity.Get<ResetShopComponent>();
 
-        activeShopItemsUpdateEventComponent.shopItems = _activeShopItemsComponent.shopItems;
-
-        foreach (ShopUIButton shopUIButton in _sceneData.shop.ShopButtons) 
+        if (resetShopComponent.isAvailable == false)
         {
-            shopUIButton.Button.interactable = true;
-            shopUIButton.Border.gameObject.SetActive(true);
-            shopUIButton.Border.gameObject.SetActive(true);
+            Debug.Log("Return");
+            return;
+        }
+
+        var currentTime = _timerEntity.Get<TimerComponent>();
+        if((_purchasedItemsComponent.items.Count == 0))
+        {
+            if ((currentTime.seconds <= _sceneData.shop.ResetShopData.FreeBuyTime) && (currentTime.minutes == 0) && (currentTime.hours == 0))
+            {
+                if (((resetShopComponent.rollsCount - 1 < _sceneData.shop.ResetShopData.FreeStartResetsCount)))
+                {
+                    resetShopComponent.currentResetPrice = 0;
+                }
+
+                if ((resetShopComponent.rollsCount >= _sceneData.shop.ResetShopData.FreeStartResetsCount))
+                {
+                    resetShopComponent.isAvailable = false;
+                    HideButton();
+                }
+            }
+        }
+
+
+        ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
+        if ((walletComponent.money - resetShopComponent.currentResetPrice) > 0)
+        {
+            UpdateWallet(ref _walletEntity.Get<WalletComponent>(), resetShopComponent.currentResetPrice);
+
+            if((_purchasedItemsComponent.items.Count > 0) || (resetShopComponent.rollsCount - 1 >= _sceneData.shop.ResetShopData.FreeStartResetsCount))
+            {
+                resetShopComponent.currentResetPrice += _sceneData.shop.ResetShopData.ResetPriceIncrease;
+            }
+            _sceneData.shop.UpdateResetPrice(resetShopComponent.currentResetPrice);
+            ResetShopItems();
+            _shopEntity.Get<ResetShopUpdateEventComponent>();
+            resetShopComponent.rollsCount++;
+        }
+        else
+        {
+            Debug.Log("Не хватает денег!");
         }
     }
+
     private void UpdateWallet(ref WalletComponent walletComponent, int price)
     {
         ref WalletUpdateComponent walletUpdateComponent = ref _walletEntity.Get<WalletUpdateComponent>();
@@ -41,54 +84,28 @@ public class ResetShopCommand : ICommand
         walletUpdateComponent.moneyIncome = walletComponent.moneyIncome;
     }
 
-    private void Reset()
+    private void ResetShopItems()
     {
-        ref var resetShopComponent = ref _shopEntity.Get<ResetShopComponent>();
-        
-        if(resetShopComponent.isAvailable)
+        ref var _activeShopItemsComponent = ref _shopEntity.Get<ShopBuyCommandsComponent>();
+        ref ShopBuyCommandsUpdateEventComponent activeShopItemsUpdateEventComponent = ref _shopEntity.Get<ShopBuyCommandsUpdateEventComponent>();
+        ref ShopBuyItemCommandComponent shopItems = ref _shopEntity.Get<ShopBuyItemCommandComponent>();
+
+
+        //activeShopItemsUpdateEventComponent.shopItems = _activeShopItemsComponent.shopItems;
+
+        foreach (ShopUIButton shopUIButton in _sceneData.shop.ShopButtons)
         {
-            ref WalletComponent walletComponent = ref _walletEntity.Get<WalletComponent>();
-            if ((walletComponent.money - resetShopComponent.currentResetPrice) >= 0)
-            {
-                UpdateWallet(ref walletComponent, resetShopComponent.currentResetPrice);
-                resetShopComponent.currentResetPrice += _sceneData.shop.ResetShopData.ResetPriceIncrease;
-                _shopEntity.Get<ResetShopUpdateComponent>();
-                
-                ResetShopItems();
-                resetShopComponent.rollsCount++;
-            }
-            else
-            {
-                Debug.Log("Не хватает денег!");
-            }
+            shopUIButton.Button.interactable = true;
+            var color = shopUIButton.Image.color;
+            color.a = 1f;
+            shopUIButton.Image.color = color;
+            shopUIButton.Border.gameObject.SetActive(true);
         }
-
-        /*
-        ref var currentTime = ref _timerEntity.Get<TimerComponent>();
-
-        if ((currentTime.minutes == 0) && (currentTime.seconds <= _shop.ResetShopData.FreeBuyTime) && (currentTime.hours == 0))
-        {
-            ref var resetShopComponent = ref _shopEntity.Get<ResetShopComponent>();
-            ref var ResetShopUpdateComponent = ref _shopEntity.Get<ResetShopUpdateComponent>();
-
-            if ((resetShopComponent.rollsCount <= _shop.ResetShopData.FreeStartResetsCount))
-            {
-                ResetShopItems();
-                resetShopComponent.rollsCount++;
-                return;
-            }
-            if ((resetShopComponent.rollsCount - 1) == _shop.ResetShopData.FreeStartResetsCount)
-            {
-                resetShopComponent.isInteractiveButton = false;
-                //_shopUIButton.Button.interactable = false;
-                return;
-            }
-        }
-        */
-
     }
-    public void Execute()
+
+
+    private void HideButton()
     {
-        Reset();
+        _sceneData.shop.ResetButton.Button.interactable = false;
     }
 }

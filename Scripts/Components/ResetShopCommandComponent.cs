@@ -8,4 +8,4 @@ public struct ResetShopComponent
     public int rollsCount;
     public int currentResetPrice;
 }
-public struct ResetShopUpdateComponent : IEcsIgnoreInFilter { }
+public struct ResetShopUpdateEventComponent : IEcsIgnoreInFilter { }

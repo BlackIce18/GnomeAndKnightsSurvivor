@@ -12,15 +12,16 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref TimerComponent timer = ref timerEntity.Get<TimerComponent>();
 
         var shopEntity = _world.NewEntity();
-        ref ActiveShopItemsComponent activeShopItems = ref shopEntity.Get<ActiveShopItemsComponent>();
         ref ShopBuyItemCommandComponent shopBuy = ref shopEntity.Get<ShopBuyItemCommandComponent>();
         ref ResetShopComponent resetShopComponent = ref shopEntity.Get<ResetShopComponent>();
         ref PurchasedItemsComponent purchasedItems = ref shopEntity.Get<PurchasedItemsComponent>();
+        ref ShopBuyCommandsComponent shopBuyCommands = ref shopEntity.Get<ShopBuyCommandsComponent>();
+        shopBuyCommands.buyCommands = new List<ShopBuyCommand>();
+
         resetShopComponent.rollsCount = 1;
         resetShopComponent.shopEntity = shopEntity;
         resetShopComponent.isAvailable = true;
 
-        activeShopItems.shopItems = new List<ShopItemGunData>();
         shopBuy.list = new List<ICommand>();
         shopBuy.isAvailable = true;
         shopBuy.shopEntity = shopEntity;
@@ -33,6 +34,11 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         _walletUpdate.moneyIncome = _sceneData.walletData.startMoneyIncome;
         _walletUpdate.killBounty = _sceneData.walletData.startKillBountyPercent;
         _sceneData.shop.CurrentKillBounty = _sceneData.walletData.startKillBountyPercent;
+
+
+        ResetShopCommand resetCommand = new ResetShopCommand(_sceneData, shopEntity, walletEntity, timerEntity, purchasedItems);
+        _sceneData.shop.AddOnClick(_sceneData.shop.ResetButton, resetCommand);
+        resetShopComponent.resetShopCommand = resetCommand;
     }
     public void Init()
     {
@@ -81,13 +87,7 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref ActiveBulletsComponent _activeBullets = ref attacksEntity.Get<ActiveBulletsComponent>();
         _activeBullets.list = new List<BulletComponent>();
 
-        EcsEntity enemyEntity = _world.NewEntity();
-        ref EnemiesPoolComponent _enemiesPool = ref enemyEntity.Get<EnemiesPoolComponent>();
-        _enemiesPool.meleeAttackersPool = new ObjectPool<EnemyComponent>(_sceneData.enemyPoolData.meleePoolCount);
-        _enemiesPool.distanceAttackersPool = new ObjectPool<EnemyComponent>(_sceneData.enemyPoolData.distancePoolCount);
-        ref EnemyQueueToSpawnComponent _enemyQueueToSpawn = ref enemyEntity.Get<EnemyQueueToSpawnComponent>();
-        _enemyQueueToSpawn.meleeEnemiesToSpawn = new Queue<EnemyWithPosition>();
-        _enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
+       
 
         EcsEntity damageTextEntity = _world.NewEntity();
         ref AllActiveDamageTextComponent activeDamageText = ref damageTextEntity.Get<AllActiveDamageTextComponent>();

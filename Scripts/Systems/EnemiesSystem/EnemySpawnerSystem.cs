@@ -5,7 +5,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
 {
     private EcsWorld _world;
     private SceneData _sceneData;
-    private EnemiesData _enemiesData;
+    private EnemiesParentObject _enemiesData;
 
     private EcsFilter<TimerComponent> _timer;
     private int _spawnTimingIndex = 0;
@@ -125,7 +125,6 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     {
         Vector3 bottomLeft = _sceneData.mainCamera.ViewportToWorldPoint(new Vector3(0, 0, _sceneData.mainCamera.transform.position.y));
         Vector3 topRight = _sceneData.mainCamera.ViewportToWorldPoint(new Vector3(1, 1, _sceneData.mainCamera.transform.position.y));
-        Debug.Log($"BottomLeft: {bottomLeft}, TopRight: {topRight}");
         if (_spawnPointsTemp)
         {
             GameObject.Destroy(_spawnPointsTemp.gameObject);
@@ -135,10 +134,8 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
         _spawnPointsTemp = GameObject.Instantiate(patterns[UnityEngine.Random.Range(0, patterns.Count)], Vector3.zero, Quaternion.identity);
 
         Bounds prefabBounds = GetPrefabBounds(_spawnPointsTemp.transform);
-        Debug.Log(prefabBounds);
         Vector3 spawnPosition = GetRandomOffScreenPosition(bottomLeft, topRight, prefabBounds);
         _spawnPointsTemp.transform.localPosition = spawnPosition;
-        Debug.Log($"Spawn at: {spawnPosition}");
         return _spawnPointsTemp;
     }
 
