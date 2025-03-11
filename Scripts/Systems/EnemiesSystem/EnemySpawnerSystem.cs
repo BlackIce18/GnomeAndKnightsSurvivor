@@ -5,7 +5,6 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
 {
     private EcsWorld _world;
     private SceneData _sceneData;
-    private EnemiesParentObject _enemiesData;
 
     private EcsFilter<TimerComponent> _timer;
     private int _spawnTimingIndex = 0;
@@ -16,8 +15,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     private EcsFilter<TimerComponent> _timerFilter = null;
 
     private EcsFilter<EnemiesPoolComponent> _poolsFilter;
-    private IEnemySpawner _distanceEnemySpawner;
-    private IEnemySpawner _meleeEnemySpawner;
+    private IEnemySpawner _spawner;
 
     private readonly Vector2[] screenDirections = new Vector2[] { Vector2.down * 25, Vector2.up * 10, Vector2.left * 15, Vector2.right * 15 };
     private EnemySpawnPoints _spawnPointsTemp;
@@ -26,8 +24,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
     public void Init()
     {
         _spawnTime = _sceneData.spawnTimings.spawnTimeInterval;
-        _meleeEnemySpawner = new MeleeEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).meleeAttackersPool);
-        _distanceEnemySpawner = new DistanceEnemySpawnerSystem(_world, _sceneData, _enemiesData, _poolsFilter.Get1(0).distanceAttackersPool);
+        _spawner = new KnightSpawnerSystem(_world, _sceneData, _poolsFilter.Get1(0).meleeAttackersPool);
     }
 
     public void Run()
@@ -81,20 +78,7 @@ public class EnemySpawnerSystem : IEcsInitSystem, IEcsRunSystem
             enemyToSpawn.enemyData = enemyData;
             enemyToSpawn.Position = enemySpawnPattern.SpawnPoints[i].transform.position;
 
-            IEnemySpawner enemySpawner;
-            switch (enemyData.attackComponent.AttackRange)
-            {
-                case AttackRange.Melee:
-                    enemySpawner = _meleeEnemySpawner;
-                    break;
-                case AttackRange.Distance:
-                    enemySpawner = _distanceEnemySpawner;
-                    break;
-                default:
-                    enemySpawner = _meleeEnemySpawner;
-                    break;
-            }
-            enemySpawner.CreateNewEnemy(enemyToSpawn.Position, enemyData);
+            _spawner.Create(enemyData, enemyToSpawn.Position);
         }
     }
 

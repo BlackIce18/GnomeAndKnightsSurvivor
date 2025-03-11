@@ -11,4 +11,5 @@ public class EnemyData : ScriptableObject
     public int Xp;
     public DefenceComponent defenceComponent;
     public EnemyAttackComponent attackComponent;
+    public bool canFollow;
 }

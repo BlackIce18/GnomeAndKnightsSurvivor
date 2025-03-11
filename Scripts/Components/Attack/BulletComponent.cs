@@ -21,10 +21,13 @@ public struct BulletComponent
     public IAttackType attackType;
     public void Default()
     {
-        this.startPosition = Vector3.zero;
-        this.endPosition = Vector3.zero;
-        this.direction = Vector3.zero;
-        this.currentLifeTime = 0;
-        this.instance.SetActive(false);
+        startPosition = Vector3.zero;
+        endPosition = Vector3.zero;
+        direction = Vector3.zero;
+        currentLifeTime = 0;
+        if (instance != null)
+        {
+            instance.SetActive(false);
+        }
     }
 }

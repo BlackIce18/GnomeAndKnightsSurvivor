@@ -35,4 +35,6 @@ public class SceneData : MonoBehaviour
 
     public HealthAndManaShieldBar healthBar;
     public HealthAndManaShieldBar manaShieldBar;
+
+    public Transform enemyParentObject;
 }

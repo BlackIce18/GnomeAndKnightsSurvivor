@@ -7,21 +7,19 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
 {
     private EcsWorld _world;
     private SceneData _sceneData;
-    private EnemiesParentObject _enemiesData;
     private EcsFilter<EnemiesPoolComponent> _filter;
     private ObjectPool<EnemyComponent> _distanceAttackersPool;
 
     private EcsFilter<EnemyQueueToSpawnComponent> _enemyQueueToSpawn;
 
-    public DistanceEnemySpawnerSystem(EcsWorld world, SceneData sceneData, EnemiesParentObject enemiesData, ObjectPool<EnemyComponent> pool)
+    public DistanceEnemySpawnerSystem(EcsWorld world, SceneData sceneData, ObjectPool<EnemyComponent> pool)
     {
         _world = world;
         _sceneData = sceneData;
-        _enemiesData = enemiesData;
         _distanceAttackersPool = pool;
     }
 
-    public void CreateNewEnemy(Vector3 position, EnemyData enemyData)
+    public void Create(EnemyData enemyData, Vector3 position)
     {
         EnemyComponent _enemyComponentFromPool = _distanceAttackersPool.GetFromPool();
         if(_enemyComponentFromPool.instance != null)
@@ -40,7 +38,7 @@ public class DistanceEnemySpawnerSystem : IEnemySpawner
         ref EnemyAttackComponent _attackComponent = ref enemyEnitity.Get<EnemyAttackComponent>();
         ref EnemyComponent _enemyComponent = ref enemyEnitity.Get<EnemyComponent>();
 
-        GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _enemiesData.parent);
+        GameObject enemy = GameObject.Instantiate(enemyData.prefab, position, enemyData.prefab.transform.rotation, _sceneData.enemyParentObject);
         enemy.SetActive(false);
         _movableComponent.transform = enemy.transform;
         EnemyCollider enemyCollider = enemy.GetComponent<EnemyCollider>();

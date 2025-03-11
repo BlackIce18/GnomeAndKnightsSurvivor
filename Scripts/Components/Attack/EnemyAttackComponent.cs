@@ -9,11 +9,12 @@ public enum AttackRange
 [Serializable]
 public struct EnemyAttackComponent
 {
-    public AttackType AttackType;
-    public AttackRange AttackRange;
+    public AttackType attackType;
+    public AttackRange attackRange;
     public float damage;
     public float range;
+    public float viewRange;
     public float attackRate;
     public float critChance;
-    public float critDamagePercantage;
+    public float critDamageMultiplier;
 }

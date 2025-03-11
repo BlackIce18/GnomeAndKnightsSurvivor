@@ -1,6 +1,5 @@
 using Leopotam.Ecs;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
 {
@@ -43,6 +42,7 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
     public void Init()
     {
         EcsEntity playerEntity = _world.NewEntity();
+        playerEntity.Get<UserComponent>();
         ref MovableComponent playerMoveComponent = ref playerEntity.Get<MovableComponent>();
         playerMoveComponent.speed = _sceneData.playerData.startSpeed;
         playerMoveComponent.transform = _sceneData.player;
@@ -99,6 +99,5 @@ public class InitSystem : IEcsPreInitSystem, IEcsInitSystem
         ref var xpComponent = ref lvlEntity.Get<XpComponent>();
         _sceneData.xpSlider.value = xpComponent.current = 0;
         _sceneData.xpSlider.maxValue = xpComponent.max = _sceneData.lvlAndXpData.xpToReachLevel[lvlComponent.current];
-
     }
 }

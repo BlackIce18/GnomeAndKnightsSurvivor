@@ -1,7 +1,5 @@
 using Leopotam.Ecs;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ResetShopCommand : ICommand
 {

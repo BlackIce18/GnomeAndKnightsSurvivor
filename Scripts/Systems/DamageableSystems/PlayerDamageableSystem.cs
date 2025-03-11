@@ -3,16 +3,27 @@ using System;
 
 public class PlayerDamageableSystem : IEcsRunSystem
 {
-    private EcsFilter<DefenceComponent, TakeDamageEventComponent> _playerHealthFilter;
+    private SceneData _sceneData;
+    private bool _test = true;
+    private EcsFilter<DefenceComponent, UserComponent> _filter;
+    private EcsFilter<DefenceComponent, UserComponent, TakeDamageEventComponent> _defenceFilter;
 
     public void Run()
     {
-        foreach (var index in _playerHealthFilter)
+        if (_test)
         {
-            ref DefenceComponent defenceComponent = ref _playerHealthFilter.Get1(index);
-            ref TakeDamageEventComponent damage = ref _playerHealthFilter.Get2(index);
-            ref EcsEntity entity = ref _playerHealthFilter.GetEntity(index);
-            var resultDamage = defenceComponent.hp - damage.damage;
+            ref var _playerCharacteristicsFilterEntity = ref _filter.GetEntity(0);
+            ref var takeDamageEvent = ref _playerCharacteristicsFilterEntity.Get<TakeDamageEventComponent>();
+            takeDamageEvent.damage = 15;
+            takeDamageEvent.attackType = new MagicAttack(_sceneData.magicTypeAttackData);
+            _test = false;
+        }
+        foreach (var index in _defenceFilter)
+        {
+            ref DefenceComponent defenceComponent = ref _defenceFilter.Get1(index);
+            ref TakeDamageEventComponent damage = ref _defenceFilter.Get3(index);
+            ref EcsEntity entity = ref _defenceFilter.GetEntity(index);
+            var resultHp = defenceComponent.hp;
 
             if (defenceComponent.manaShield > 0)
             {
@@ -29,12 +40,12 @@ public class PlayerDamageableSystem : IEcsRunSystem
                     {
                         playerManaShieldUpdateEvent.newManaShield = defenceComponent.manaShield = 0;
                         difference = Math.Abs(difference);
-                        resultDamage = defenceComponent.hp -= difference;
+                        resultHp = defenceComponent.hp -= difference;
                     }
                 }
             }
             ref var playerHealthUpdateEvent = ref entity.Get<HpUpdateEventComponent>();
-            playerHealthUpdateEvent.newHealthPoints = resultDamage;
+            playerHealthUpdateEvent.newHealthPoints = resultHp;
 
             entity.Del<TakeDamageEventComponent>();
         }

@@ -1,7 +1,6 @@
 using Leopotam.Ecs;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Numerics;
 
 public class EnemyInitSystem : IEcsInitSystem
 {
@@ -16,5 +15,8 @@ public class EnemyInitSystem : IEcsInitSystem
         ref EnemyQueueToSpawnComponent enemyQueueToSpawn = ref enemyEntity.Get<EnemyQueueToSpawnComponent>();
         enemyQueueToSpawn.meleeEnemiesToSpawn = new Queue<EnemyWithPosition>();
         enemyQueueToSpawn.distanceEnemiesToSpawn = new Queue<EnemyWithPosition>();
+
+        EnemySpawnerFactory.Initialize(_world, _sceneData, enemiesPool.meleeAttackersPool);
+        EnemySpawnerFactory.SpawnEnemy("Knight", new UnityEngine.Vector3(7, 0, 0));
     }
 }

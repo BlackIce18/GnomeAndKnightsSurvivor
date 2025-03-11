@@ -7,7 +7,6 @@ public class Bootstrap : MonoBehaviour
     private EcsSystems _systems;
     private EcsSystems _enemySystems;
     [SerializeField] private SceneData _sceneData;
-    [SerializeField] private EnemiesParentObject _enemyData;
     [SerializeField] private ActiveGuns _activeGuns;
     // Start is called before the first frame update
     void Start()
@@ -26,12 +25,12 @@ public class Bootstrap : MonoBehaviour
         _systems.Add(new MoneyIncomeSystem());
         _systems.Add(new KillBountySystem());
         _systems.Add(new HpRegenSystem());
+        _systems.Add(new ManaShieldRegenSystem());
         _systems.Add(new SingleBulletWeaponSystem());
         _systems.Add(new BulletMoverSystem());
         _systems.Add(new PlayerDamageableSystem());
         _systems.Add(new LifeTimeBulletsSystem());
         _systems.Add(new BorderColorsSystem());
-        _systems.Add(new ManaShieldRegenSystem());
         _systems.Add(new DamageTextSystem());
         _systems.Add(new XpSystem());
         _systems.Add(new LvlSystem());
@@ -48,9 +47,9 @@ public class Bootstrap : MonoBehaviour
         _enemySystems.Add(new FollowSystem());
         _enemySystems.Add(new EnemyDamageableSystem());
         _enemySystems.Add(new EnemySpawnerSystem());
+        _enemySystems.Add(new EnemyStateSystem());
         _enemySystems.Add(new RemoveEnemySystem());
         _enemySystems.Inject(_sceneData);
-        _enemySystems.Inject(_enemyData);
         _enemySystems.Init();
     }
 

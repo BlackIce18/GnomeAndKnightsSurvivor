@@ -2,6 +2,7 @@ using Leopotam.Ecs;
 using UnityEngine;
 public class HpRegenSystem : IEcsRunSystem
 {
+
     private EcsFilter<DefenceComponent, HPRegenComponent> _defenceFilter;
     private EcsFilter<DefenceComponent, HPRegenComponent, TakeDamageEventComponent> _defenceTakeDamageFilter;
 
@@ -12,7 +13,7 @@ public class HpRegenSystem : IEcsRunSystem
             ref var hpRegenComponent = ref _defenceTakeDamageFilter.Get2(i);
             hpRegenComponent.elapsedTimeToStartRegen = 0;
             hpRegenComponent.canRegen = false;
-            break;
+            //break;
         }
 
         foreach (var i in _defenceFilter)

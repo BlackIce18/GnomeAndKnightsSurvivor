@@ -1,14 +1,9 @@
 using Leopotam.Ecs;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class RemoveEnemySystem : IEcsInitSystem, IEcsRunSystem
 {
     private SceneData _sceneData;
     private EcsFilter<DefenceComponent, EnemyComponent, OnTriggerEnterComponent> _filter = null;
-    private EcsFilter<EnemiesPoolComponent> _enemiesPool = null;
-    private EcsFilter<OnTriggerEnterComponent> _onTriggerEnter = null;
     private EcsFilter<WalletComponent> _walletFilter = null;
     private EcsEntity _walletEntity;
     private EcsFilter<LvlComponent, XpComponent> _lvlFilter = null;

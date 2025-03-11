@@ -9,25 +9,18 @@ public class ManaShieldRegenSystem : IEcsRunSystem
     private EcsFilter<DefenceComponent, ManaShieldRegenComponent> _defenceFilter;
     private EcsFilter<DefenceComponent, ManaShieldRegenComponent, TakeDamageEventComponent> _defenceTakeDamageFilter;
 
-    private bool _test = true;
+
 
     public void Run()
     {
-        if (_test)
-        {
-            ref var _playerCharacteristicsFilterEntity = ref _defenceFilter.GetEntity(0);
-            _playerCharacteristicsFilterEntity.Get<TakeDamageEventComponent>().damage = 150;
-            _playerCharacteristicsFilterEntity.Get<TakeDamageEventComponent>().attackType = new MagicAttack(_sceneData.magicTypeAttackData);
-            _playerCharacteristicsFilterEntity.Get<DefenceComponent>();
-            _test = false;
-        }
+
 
         foreach (var i in _defenceTakeDamageFilter)
         {
             ref var manaShieldRegenComponent = ref _defenceTakeDamageFilter.Get2(i);
             manaShieldRegenComponent.elapsedTimeToStartRegen = 0;
             manaShieldRegenComponent.canRegen = false;
-            break;
+            //break;
         }
 
         foreach (var i in _defenceFilter)
